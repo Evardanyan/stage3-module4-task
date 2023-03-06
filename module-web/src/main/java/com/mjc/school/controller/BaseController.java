@@ -1,25 +1,31 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.service.dto.NewsDtoResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface BaseController<T, R, K> {
 
-    List<R> readAll();
+    ResponseEntity<List<R>> readAll();
 
-    R readById(K id);
+    ResponseEntity<R> readById(K id);
 
-    List<R> readTagsByNewsId(K id);
+   default ResponseEntity<List<R>> readTagsByNewsId(K id) {
+       return ResponseEntity.notFound().build();
+   }
 
-    R readAuthorByNewsId(K id);
+    ResponseEntity<R> readAuthorByNewsId(K id);
 
-    R getNewsByParams(String tagName, Long tagId, String authorName, String title, String content);
+    default ResponseEntity<R> getNewsByParams(String tagName, Long tagId, String authorName, String title, String content) {
+        return ResponseEntity.notFound().build();
+    }
 
-    R create(T createRequest);
+    ResponseEntity<R> create(T createRequest);
 
-    R update(T updateRequest);
+    ResponseEntity<R> update(T updateRequest);
 
-    boolean deleteById(K id);
+    ResponseEntity<Void> deleteById(K id);
 
 }
+
