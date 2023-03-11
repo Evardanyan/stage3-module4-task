@@ -25,14 +25,16 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
 
     @Override
     public ResponseEntity<List<TagDtoResponse>> readAll() {
-        List<TagDtoResponse> tags = service.readAll();
-        return ResponseEntity.ok(tags);
+//        List<TagDtoResponse> tags = service.readAll();
+//        return ResponseEntity.ok(tags);
+        return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
     }
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
     public ResponseEntity<TagDtoResponse> readById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.readById(id));
+//        return ResponseEntity.ok(service.readById(id));
+        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
     @Override

@@ -26,14 +26,16 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
 
     @Override
     public ResponseEntity<List<NewsDtoResponse>> readAll() {
-        List<NewsDtoResponse> news = service.readAll();
-        return ResponseEntity.ok(news);
+//        List<NewsDtoResponse> news = service.readAll();
+//        return ResponseEntity.ok(news);
+        return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
     }
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
     public ResponseEntity<NewsDtoResponse> readById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.readById(id));
+//        return ResponseEntity.ok(service.readById(id));
+        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
     @Override

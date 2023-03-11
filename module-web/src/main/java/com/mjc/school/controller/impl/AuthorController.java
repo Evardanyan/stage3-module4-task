@@ -23,14 +23,16 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
 
     @Override
     public ResponseEntity<List<AuthorDtoResponse>> readAll() {
-        List<AuthorDtoResponse> authors = service.readAll();
-        return ResponseEntity.ok(authors);
+//        List<AuthorDtoResponse> authors = service.readAll();
+//        return ResponseEntity.ok(authors);
+        return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
     }
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
     public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.readById(id));
+//        return ResponseEntity.ok(service.readById(id));
+        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
     @Override
