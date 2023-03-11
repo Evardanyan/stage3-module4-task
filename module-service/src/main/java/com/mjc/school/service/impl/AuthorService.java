@@ -39,7 +39,7 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
     }
 
     @Override
-    @ValidateAuthorId
+//    @ValidateAuthorId
     public AuthorDtoResponse readById(Long id) {
         Optional<AuthorModel> authorModelOptional = this.authorRepository.findById(id);
         if (authorModelOptional.isPresent()) {
@@ -49,7 +49,7 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
         throw new NotFoundException(String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), id));
     }
 
-    @ValidateTagId
+//    @ValidateTagId
     public AuthorDtoResponse readAuthorByNewsId(Long newsId) {
         Optional<NewsModel> newsModelOptional = newsRepository.findById(newsId);
         if (newsModelOptional.isPresent()) {
@@ -61,7 +61,7 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
     }
 
     @Override
-    @ValidateAuthorDto
+//    @ValidateAuthorDto
     public AuthorDtoResponse create(AuthorDtoRequest dtoRequest) {
         if (!this.authorRepository.existsById(dtoRequest.id())) {
             AuthorModel model = this.mapper.dtoToModel(dtoRequest);
@@ -73,8 +73,8 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
 
 
     @Override
-    @ValidateAuthorId
-    @ValidateAuthorDto
+//    @ValidateAuthorId
+//    @ValidateAuthorDto
     public AuthorDtoResponse update(AuthorDtoRequest dtoRequest) {
         if (this.authorRepository.existsById(dtoRequest.id())) {
             AuthorModel model = this.mapper.dtoToModel(dtoRequest);
@@ -86,7 +86,7 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
     }
 
     @Override
-    @ValidateAuthorId
+//    @ValidateAuthorId
     public boolean deleteById(Long id) {
         if (this.authorRepository.existsById(id)) {
             this.authorRepository.deleteById(id);

@@ -32,7 +32,7 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
         this.mapper = mapper;
     }
 
-    @ValidateTagId
+//    @ValidateTagId
     public List<TagDtoResponse> readTagsByNewsId(Long newsId) {
         Optional<NewsModel> newsModelOptional = newsRepository.findById(newsId);
         if (newsModelOptional.isPresent()) {
@@ -50,7 +50,7 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
     }
 
     @Override
-    @ValidateTagId
+//    @ValidateTagId
     public TagDtoResponse readById(Long id) {
         Optional<TagModel> tagModelOptional = this.baseRepository.findById(id);
         if (tagModelOptional.isPresent()) {
@@ -61,7 +61,7 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
     }
 
     @Override
-    @ValidateTagDto
+//    @ValidateTagDto
     public TagDtoResponse create(TagDtoRequest dtoRequest) {
         if (!this.baseRepository.existsById(dtoRequest.id())) {
             TagModel model = this.mapper.dtoToModel(dtoRequest);
@@ -73,8 +73,8 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
 
 
     @Override
-    @ValidateTagId
-    @ValidateTagDto
+//    @ValidateTagId
+//    @ValidateTagDto
     public TagDtoResponse update(TagDtoRequest dtoRequest) {
         Optional<TagModel> tagModelOptional = this.baseRepository.findById(dtoRequest.id());
         if (tagModelOptional.isPresent()) {
@@ -87,7 +87,7 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
     }
 
     @Override
-    @ValidateTagId
+//    @ValidateTagId
     public boolean deleteById(Long id) {
         Optional<TagModel> tagModelOptional = this.baseRepository.findById(id);
         if (tagModelOptional.isPresent()) {

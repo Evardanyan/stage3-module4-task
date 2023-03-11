@@ -12,6 +12,7 @@ import com.mjc.school.service.dto.NewsDtoResponse;
 import com.mjc.school.service.exception.NotFoundException;
 import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.NewsModelMapper;
+import org.mockito.internal.matchers.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
     }
 
     @Override
-    @ValidateNewsId
+//    @ValidateNewsId
     public NewsDtoResponse readById(Long id) {
         NewsModel newsModel = newsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
@@ -46,7 +47,7 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
     }
 
     @Override
-    @ValidateNewsDto
+//    @ValidateNewsDto
     public NewsDtoResponse create(NewsDtoRequest dtoRequest) {
         if (newsRepository.existsById(dtoRequest.id())) {
             throw new NotFoundException(
@@ -59,8 +60,8 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
     }
 
     @Override
-    @ValidateNewsId
-    @ValidateNewsDto
+//    @ValidateNewsId
+//    @ValidateNewsDto
     public NewsDtoResponse update(NewsDtoRequest dtoRequest) {
         NewsModel newsModel = newsRepository.findById(dtoRequest.id())
                 .orElseThrow(() -> new NotFoundException(
@@ -73,8 +74,8 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
     }
 
     @Override
-    @ValidateNewsId
-    @OnDelete
+//    @ValidateNewsId
+//    @OnDelete
     public boolean deleteById(Long newsId) {
         if (!newsRepository.existsById(newsId)) {
             throw new NotFoundException(
@@ -95,18 +96,33 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
         return null;
     }
 
-    public NewsDtoResponse getNewsByParams(String tagNames, Long tagIds, String authorName, String title, String content) {
-        List<NewsModel> newsModels = newsRepository.getNewsByParams(
+//    public NewsDtoResponse getNewsByParams(String tagNames, Long tagIds, String authorName, String title, String content) {
+//        List<NewsModel> newsModels = newsRepository.getNewsByParams(
+//                tagNames == null ? null : Arrays.asList(tagNames.split(",")),
+//                tagIds == null ? null : Collections.singletonList(tagIds),
+//                authorName,
+//                title,
+//                content);
+//        if (newsModels.isEmpty()) {
+//            throw new NotFoundException("No news items found with the specified criteria.");
+//        }
+//        return this.mapper.modelToDto(newsModels.get(0));
+//    }
+
+        public NewsDtoResponse getNewsByParams(String tagNames, Long tagIds, String authorName, String title, String content) {
+        NewsModel newsModels = newsRepository.getNewsByParams(
                 tagNames == null ? null : Arrays.asList(tagNames.split(",")),
                 tagIds == null ? null : Collections.singletonList(tagIds),
                 authorName,
                 title,
                 content);
-        if (newsModels.isEmpty()) {
+        if (newsModels.equals(null)) {
             throw new NotFoundException("No news items found with the specified criteria.");
         }
-        return this.mapper.modelToDto(newsModels.get(0));
+        return this.mapper.modelToDto(newsModels);
     }
+
+
 
 //    @Override
 //    public NewsDtoResponse getNewsByParams(String tagNames, Long tagIds, String authorName, String title, String content) {
