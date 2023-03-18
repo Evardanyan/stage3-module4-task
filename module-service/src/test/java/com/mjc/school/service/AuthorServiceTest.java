@@ -55,7 +55,7 @@ class AuthorServiceTest {
 
         when(mapper.dtoToModel(authorDto)).thenReturn(authorModel);
 
-        when(authorRepository.create(any(AuthorModel.class))).thenReturn(savedAuthorModel);
+        when(authorRepository.save(any(AuthorModel.class))).thenReturn(savedAuthorModel);
 
         when(mapper.modelToDto(savedAuthorModel)).thenReturn(new AuthorDtoResponse(1L, "Author Name", now, now));
 
@@ -64,11 +64,10 @@ class AuthorServiceTest {
         assertEquals(new AuthorDtoResponse(1L, "Author Name", now, now), result);
 
         verify(mapper, times(1)).dtoToModel(authorDto);
-        verify(authorRepository, times(1)).create(authorModel);
+        verify(authorRepository, times(1)).save(authorModel);
         verify(mapper, times(1)).modelToDto(savedAuthorModel);
 
     }
-
 
     @DisplayName("JUnit test for update method")
     @Test
@@ -81,19 +80,12 @@ class AuthorServiceTest {
         authorModel.setCreateDate(now);
         authorModel.setLastUpdatedDate(now);
 
-        AuthorModel updatedAuthorModel = new AuthorModel();
-        updatedAuthorModel.setId(id);
-        updatedAuthorModel.setName("Author Name");
-        updatedAuthorModel.setCreateDate(now);
-        updatedAuthorModel.setLastUpdatedDate(now);
-
         AuthorDtoRequest authorDtoRequest = new AuthorDtoRequest(id, "Author Name");
 
         AuthorDtoResponse authorDtoResponse = new AuthorDtoResponse(id, "Author Name", now, now);
 
-        when(authorRepository.existById(id)).thenReturn(true);
-        when(mapper.dtoToModel(authorDtoRequest)).thenReturn(authorModel);
-        when(authorRepository.update(any(AuthorModel.class))).thenReturn(authorModel);
+        when(authorRepository.findById(id)).thenReturn(Optional.of(authorModel));
+        when(authorRepository.save(any(AuthorModel.class))).thenReturn(authorModel);
         when(mapper.modelToDto(any(AuthorModel.class))).thenReturn(authorDtoResponse);
 
         AuthorDtoResponse result = authorService.update(authorDtoRequest);
@@ -113,7 +105,7 @@ class AuthorServiceTest {
         authorDtoResponses.add(new AuthorDtoResponse(1L, "Author Name 1", now, now));
         authorDtoResponses.add(new AuthorDtoResponse(2L, "Author Name 2", now, now));
 
-        when(authorRepository.readAll()).thenReturn(authorModels);
+        when(authorRepository.findAll()).thenReturn(authorModels);
         when(mapper.modelListToDtoList(authorModels)).thenReturn(authorDtoResponses);
 
         List<AuthorDtoResponse> result = authorService.readAll();
@@ -135,8 +127,7 @@ class AuthorServiceTest {
 
         AuthorDtoResponse authorDtoResponse = new AuthorDtoResponse(id, "Author Name", now, now);
 
-        when(authorRepository.existById(anyLong())).thenReturn(true);
-        when(authorRepository.readById(anyLong())).thenReturn(Optional.of(authorModel));
+        when(authorRepository.findById(anyLong())).thenReturn(Optional.of(authorModel));
         when(mapper.modelToDto(authorModel)).thenReturn(authorDtoResponse);
 
         AuthorDtoResponse result = authorService.readById(1L);
@@ -149,14 +140,16 @@ class AuthorServiceTest {
     @Test
     void testDeleteById() {
         Long id = 1L;
-        when(authorRepository.existById(id)).thenReturn(true);
-        when(authorRepository.deleteById(id)).thenReturn(true);
+        AuthorModel authorModel = new AuthorModel();
+        authorModel.setId(id);
 
+        when(authorRepository.findById(id)).thenReturn(Optional.of(authorModel));
+        doNothing().when(authorRepository).deleteById(id);
 
         boolean deleted = authorService.deleteById(id);
 
         assertTrue(deleted);
-        verify(authorRepository, times(1)).existById(id);
+        verify(authorRepository, times(1)).findById(id);
         verify(authorRepository, times(1)).deleteById(id);
     }
 
@@ -164,10 +157,12 @@ class AuthorServiceTest {
     @Test
     void testDeleteByIdNonExisting() {
         Long id = 1L;
-        when(authorRepository.existById(id)).thenReturn(false);
+        when(authorRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> authorService.deleteById(id));
-        verify(authorRepository, times(1)).existById(id);
+        verify(authorRepository, times(1)).findById(id);
         verify(authorRepository, never()).deleteById(id);
     }
+
+
 }

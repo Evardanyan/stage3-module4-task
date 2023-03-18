@@ -1,6 +1,7 @@
 package com.mjc.school.service;
 
 
+import com.mjc.school.repository.impl.AuthorRepository;
 import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.impl.AuthorModel;
 import com.mjc.school.repository.model.impl.NewsModel;
@@ -17,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +35,9 @@ class NewsServiceTest {
     private NewsRepository newsRepository;
 
     @Mock
+    private AuthorRepository authorRepository;
+
+    @Mock
     private NewsModelMapper mapper;
 
     @InjectMocks
@@ -45,6 +48,8 @@ class NewsServiceTest {
     private NewsDtoResponse newsDtoResponse;
 
     private NewsModel newsModel;
+
+    private AuthorModel authorModel;
 
     private List<NewsModel> newsModels;
 
@@ -59,15 +64,15 @@ class NewsServiceTest {
 
         newsDtoResponse = new NewsDtoResponse(1L, "Test News Title", "Test News Content", now, 1L);
 
-        AuthorModel authorModel = new AuthorModel();
+        authorModel = new AuthorModel();
         authorModel.setId(1L);
         authorModel.setName("Author name");
         authorModel.setCreateDate(now);
 
         AuthorModel authorSecondModel = new AuthorModel();
-        authorModel.setId(2L);
-        authorModel.setName("Author name 2");
-        authorModel.setCreateDate(now);
+        authorSecondModel.setId(2L);
+        authorSecondModel.setName("Author name 2");
+        authorSecondModel.setCreateDate(now);
 
 
         newsModel = new NewsModel();
@@ -91,15 +96,11 @@ class NewsServiceTest {
     @DisplayName("JUnit test for create method")
     @Test
     void createNews_Success() {
-
-        when(newsRepository.existById(anyLong())).thenReturn(false);
         when(mapper.dtoToModel(any(NewsDtoRequest.class))).thenReturn(newsModel);
-        when(newsRepository.create(any(NewsModel.class))).thenReturn(newsModel);
+        when(newsRepository.save(any(NewsModel.class))).thenReturn(newsModel);
         when(mapper.modelToDto(any(NewsModel.class))).thenReturn(newsDtoResponse);
 
-
         NewsDtoResponse result = newsService.create(newsDtoRequest);
-
 
         assertNotNull(result);
         assertEquals(newsDtoResponse.id(), result.id());
@@ -109,16 +110,16 @@ class NewsServiceTest {
         assertEquals(newsDtoResponse.createDate(), result.createDate());
     }
 
-
     @DisplayName("JUnit test for update method")
     @Test
     void updateNews_Success() {
+        Long newsId = 1L;
+        Long authorId = 1L;
 
-        when(newsRepository.existById(anyLong())).thenReturn(true);
-        when(mapper.dtoToModel(any(NewsDtoRequest.class))).thenReturn(newsModel);
-        when(newsRepository.update(any(NewsModel.class))).thenReturn(newsModel);
-        when(mapper.modelToDto(any(NewsModel.class))).thenReturn(newsDtoResponse);
-
+        when(newsRepository.findById(newsId)).thenReturn(Optional.of(newsModel));
+        when(authorRepository.findById(authorId)).thenReturn(Optional.of(authorModel));
+        when(newsRepository.save(newsModel)).thenReturn(newsModel);
+        when(mapper.modelToDto(newsModel)).thenReturn(newsDtoResponse);
 
         NewsDtoResponse result = newsService.update(newsDtoRequest);
 
@@ -128,20 +129,26 @@ class NewsServiceTest {
         assertEquals(newsDtoResponse.content(), result.content());
         assertEquals(newsDtoResponse.authorId(), result.authorId());
         assertEquals(newsDtoResponse.createDate(), result.createDate());
+
+        verify(newsRepository, times(1)).findById(newsId);
+        verify(authorRepository, times(1)).findById(authorId);
+        verify(newsRepository, times(1)).save(newsModel);
+        verify(mapper, times(1)).modelToDto(newsModel);
     }
+
 
 
     @DisplayName("JUnit test for readAll method")
     @Test
     void testReadAll() {
 
-        when(newsRepository.readAll()).thenReturn(newsModels);
+        when(newsRepository.findAll()).thenReturn(newsModels);
         when(mapper.modelListToDtoList(newsModels)).thenReturn(expectedDtos);
 
         List<NewsDtoResponse> actualDtos = newsService.readAll();
 
         assertEquals(expectedDtos, actualDtos);
-        verify(newsRepository).readAll();
+        verify(newsRepository).findAll();
         verify(mapper).modelListToDtoList(newsModels);
     }
 
@@ -151,15 +158,13 @@ class NewsServiceTest {
         Long id = 1L;
 
         NewsDtoResponse expectedDto = new NewsDtoResponse(1L, "Test News Title", "Test News Content", now, 1L);
-        when(newsRepository.existById(id)).thenReturn(true);
-        when(newsRepository.readById(id)).thenReturn(Optional.of(newsModel));
+        when(newsRepository.findById(id)).thenReturn(Optional.of(newsModel));
         when(mapper.modelToDto(newsModel)).thenReturn(expectedDto);
 
         NewsDtoResponse actualDto = newsService.readById(id);
 
         assertEquals(expectedDto, actualDto);
-        verify(newsRepository).existById(id);
-        verify(newsRepository).readById(id);
+        verify(newsRepository).findById(id);
         verify(mapper).modelToDto(newsModel);
     }
 
@@ -167,13 +172,13 @@ class NewsServiceTest {
     @Test
     void testDeleteById() {
         Long id = 1L;
-        when(newsRepository.existById(id)).thenReturn(true);
-        when(newsRepository.deleteById(id)).thenReturn(true);
+        when(newsRepository.existsById(id)).thenReturn(true);
+        doNothing().when(newsRepository).deleteById(id);
 
         boolean deleted = newsService.deleteById(id);
 
         assertTrue(deleted);
-        verify(newsRepository).existById(id);
+        verify(newsRepository).existsById(id);
         verify(newsRepository).deleteById(id);
     }
 
@@ -181,10 +186,10 @@ class NewsServiceTest {
     @Test
     void testDeleteByIdNonExisting() {
         Long id = 1L;
-        when(newsRepository.existById(id)).thenReturn(false);
+        when(newsRepository.existsById(id)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> newsService.deleteById(id));
-        verify(newsRepository, times(1)).existById(id);
+        verify(newsRepository, times(1)).existsById(id);
         verify(newsRepository, never()).deleteById(id);
     }
 }

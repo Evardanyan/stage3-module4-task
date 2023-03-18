@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/tags", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
+@RequestMapping(value = "/api/v1/tags")
 @Validated
 public class TagController implements BaseController<TagDtoRequest, TagDtoResponse, Long> {
 
@@ -27,6 +27,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
     }
 
     @Override
+    @GetMapping
     public ResponseEntity<List<TagDtoResponse>> readAll() {
 //        List<TagDtoResponse> tags = service.readAll();
 //        return ResponseEntity.ok(tags);

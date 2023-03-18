@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/news", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
+@RequestMapping(value = "/api/v1/news")
 @Validated
 public class NewsController implements BaseController<NewsDtoRequest, NewsDtoResponse, Long> {
 
@@ -28,6 +28,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
 
 
     @Override
+    @GetMapping
     public ResponseEntity<List<NewsDtoResponse>> readAll() {
 //        List<NewsDtoResponse> news = service.readAll();
 //        return ResponseEntity.ok(news);
@@ -36,7 +37,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
-    public ResponseEntity<NewsDtoResponse> readById(@Valid @PathVariable Long id) {
+    public ResponseEntity<NewsDtoResponse> readById(@PathVariable Long id) {
 //        return ResponseEntity.ok(service.readById(id));
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }

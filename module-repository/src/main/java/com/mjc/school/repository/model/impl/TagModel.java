@@ -1,5 +1,6 @@
 package com.mjc.school.repository.model.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mjc.school.repository.model.BaseEntity;
 
 import javax.persistence.*;
@@ -16,7 +17,9 @@ public class TagModel implements BaseEntity<Long> {
     private Long id;
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tagModels")
+//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tagModels")
+    @JsonIgnore
+    @ManyToMany(mappedBy = "tagModels", fetch = FetchType.LAZY)
     private List<NewsModel> newsModel;
 
 

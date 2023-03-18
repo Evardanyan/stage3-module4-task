@@ -10,5 +10,4 @@ public record NewsDtoResponse(Long id, String title, String content, Date create
     public NewsDtoResponse(Long id, String title, String content, Date createDate, Long authorId) {
         this(id, title, content, null, null, authorId, null);
     }
-
 }

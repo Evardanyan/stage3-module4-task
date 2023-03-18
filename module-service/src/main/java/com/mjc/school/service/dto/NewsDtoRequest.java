@@ -5,7 +5,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-public record NewsDtoRequest(@Positive @Digits(integer = 10, fraction = 0) Long id, @NotBlank  @Size(min = 5, max = 30) String title, @NotBlank  @Size(min = 5, max = 255) String content, Long authorId, Long tagId) {
+//public record NewsDtoRequest(@Positive @Digits(integer = 10, fraction = 0) Long id, @NotBlank  @Size(min = 5, max = 30) String title, @NotBlank  @Size(min = 5, max = 255) String content, Long authorId, Long tagId) {
+public record NewsDtoRequest(Long id, @NotBlank  @Size(min = 5, max = 30) String title, @NotBlank  @Size(min = 5, max = 255) String content, Long authorId, Long tagId) {
     public NewsDtoRequest(String title, String content, Long authorId) {
         this(null, title, content, authorId, null);
     }

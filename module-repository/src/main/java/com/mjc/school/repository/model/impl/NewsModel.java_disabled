@@ -20,6 +20,8 @@ public class NewsModel implements BaseEntity<Long> {
     private String title;
     private String content;
 
+    private Long tagId;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date")
@@ -29,6 +31,22 @@ public class NewsModel implements BaseEntity<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated_date")
     private Date lastUpdatedDate;
+
+    public AuthorModel getAuthorModel() {
+        return authorModel;
+    }
+
+    public void setAuthorModel(AuthorModel authorModel) {
+        this.authorModel = authorModel;
+    }
+
+    public Long getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Long tagId) {
+        this.tagId = tagId;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
@@ -50,14 +68,6 @@ public class NewsModel implements BaseEntity<Long> {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.authorModel = authorModel;
-    }
-
-    public AuthorModel getAuthorModel() {
-        return authorModel;
-    }
-
-    public void setAuthorModel(AuthorModel authorModel) {
         this.authorModel = authorModel;
     }
 
@@ -135,10 +145,10 @@ public class NewsModel implements BaseEntity<Long> {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", tagId=" + tagId +
                 ", createDate=" + createDate +
                 ", lastUpdatedDate=" + lastUpdatedDate +
                 ", authorModel=" + authorModel +
                 '}';
     }
 }
-
