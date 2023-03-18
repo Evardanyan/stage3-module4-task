@@ -1,5 +1,6 @@
 package com.mjc.school.service;
 
+import java.util.Collections;
 import java.util.List;
 
 public interface BaseService<T, R, K> {
@@ -13,9 +14,15 @@ public interface BaseService<T, R, K> {
 
     boolean deleteById(K id);
 
-    List<R> readTagsByNewsId(K id);
+   default List<R> readTagsByNewsId(K id) {
+       return Collections.emptyList();
+   }
 
-    R readAuthorByNewsId(K id);
+   default R readAuthorByNewsId(K id) {
+       return null;
+    }
 
-    R getNewsByParams(String tagName, Long tagId, String authorName, String title, String content);
+   default R getNewsByParams(String tagName, Long tagId, String authorName, String title, String content) {
+       return null;
+   }
 }

@@ -23,6 +23,7 @@ public interface AuthorModelMapper {
     @Named("modelAuthorNameToDto")
     public AuthorDtoResponse modelAuthorNameToDto(AuthorModel var1);
 
+//    @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true)})
     @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true)})
     public AuthorModel dtoToModel(AuthorDtoRequest var1);
 

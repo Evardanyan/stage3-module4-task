@@ -11,6 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.List;
 
 @RestController
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/authors")
 @Validated
 public class AuthorController implements BaseController<AuthorDtoRequest, AuthorDtoResponse, Long> {
+
 
     private final BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> service;
 
@@ -33,9 +36,10 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
         return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
     }
 
+
     @Override
     @GetMapping(value = "/{id:\\d+}")
-    public ResponseEntity<AuthorDtoResponse> readById(@Valid @PathVariable Long id) {
+    public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
 //        return ResponseEntity.ok(service.readById(id));
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
@@ -56,7 +60,7 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
 
     @Override
     @DeleteMapping(value = "/{id:\\d+}")
-    public ResponseEntity<Void> deleteById(@Valid @PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

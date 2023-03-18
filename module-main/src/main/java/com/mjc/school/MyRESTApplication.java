@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
-@EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
 @EntityScan(basePackages = "com.mjc.school.repository")
 public class MyRESTApplication {
     public static void main(String[] args) {

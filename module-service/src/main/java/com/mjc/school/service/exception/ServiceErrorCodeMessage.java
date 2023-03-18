@@ -15,7 +15,9 @@ public enum ServiceErrorCodeMessage {
 
     NEWS_ID_ALREADY_EXIST("008","News Id already exist. Author Id is: %s"),
 
-    TAG_ID_ALREADY_EXIST("009","Tag Id already exist. Tag Id is: %s");
+    TAG_ID_ALREADY_EXIST("009","Tag Id already exist. Tag Id is: %s"),
+
+    AUTHOR_NAME_ALREADY_EXIST("010","Author name already exist. Author name is: %s");
 
 
 

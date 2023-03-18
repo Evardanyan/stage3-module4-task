@@ -13,6 +13,11 @@ public class ExceptionDetails {
     public ExceptionDetails() {
     }
 
+    public ExceptionDetails(String message, ZonedDateTime timeStamp) {
+        this.message = message;
+        this.timeStamp = timeStamp;
+    }
+
     public ExceptionDetails(String message, String exceptionName, ZonedDateTime timeStamp) {
         this.message = message;
         this.exceptionName = exceptionName;

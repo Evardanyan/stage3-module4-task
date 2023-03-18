@@ -1,5 +1,6 @@
 package com.mjc.school.controller.exception;
 
+import com.mjc.school.service.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolationException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -34,12 +36,25 @@ public class WebExceptionHandler {
     public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         String errorMessage = String.format("Invalid value for parameter '%s': '%s'. Must be of type '%s'.", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName());
         return ResponseEntity.badRequest().body(errorMessage);
+
+//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 //    @ExceptionHandler(NotFoundException.class)
 //    public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
 //        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 //    }
+
+//    @ExceptionHandler(NotFoundException.class)
+//    public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
+//        System.out.println("Handling NotFoundException: " + e.getMessage());
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(NotFoundException exception) {
@@ -78,4 +93,11 @@ public class WebExceptionHandler {
         );
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(exceptionDetails);
     }
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<String> handleAllExceptions(Exception e) {
+//        System.out.println("Exception class: " + e.getClass().getName());
+//        System.out.println("Exception message: " + e.getMessage());
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 }
