@@ -14,11 +14,13 @@ import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.NewsModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional
 public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse, Long> {
 
     private final NewsRepository newsRepository;
@@ -57,6 +59,7 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
         if (dtoRequest.tagId() != null) {
             TagModel tagModel = tagRepository.findById(dtoRequest.tagId())
                     .orElseThrow(() -> new NotFoundException("Tag not found with the given ID"));
+//            model.setTagModels(Collections.singletonList(tagModel));
             model.setTagModels(Collections.singletonList(tagModel));
         }
 
@@ -96,7 +99,13 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
                     ));
             existingNewsModel.setAuthorModel(authorModel);
         }
-
+        if (dtoRequest.tagId() != null) {
+            TagModel tagModel = tagRepository.findById(dtoRequest.tagId())
+                    .orElseThrow(() -> new NotFoundException(
+                            String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.tagId())
+                    ));
+            existingNewsModel.setTagModels(Collections.singletonList(tagModel));
+        }
         NewsModel updatedNewsModel = newsRepository.save(existingNewsModel);
         return mapper.modelToDto(updatedNewsModel);
     }
@@ -130,14 +139,10 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
 //    }
 
 
-
     @Override
     public boolean deleteById(Long newsId) {
-        if (!newsRepository.existsById(newsId)) {
-            throw new NotFoundException(
-                    String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), newsId)
-            );
-        }
+        newsRepository.findById(newsId)
+                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), newsId)));
         newsRepository.deleteById(newsId);
         return true;
     }

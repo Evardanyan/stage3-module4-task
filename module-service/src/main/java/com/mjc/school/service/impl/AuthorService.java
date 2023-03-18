@@ -12,10 +12,12 @@ import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.AuthorModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> {
 
     //    private final JpaRepository<AuthorModel, Long> authorRepository;
@@ -70,7 +72,7 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
 
     @Override
     public boolean deleteById(Long id) {
-        AuthorModel author = this.authorRepository.findById(id)
+       authorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
         authorRepository.deleteById(id);
         return true;
