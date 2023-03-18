@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+//@Transactional
 public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Long> {
 //    private final JpaRepository<TagModel, Long> baseRepository;
     private final TagRepository tagrepository;

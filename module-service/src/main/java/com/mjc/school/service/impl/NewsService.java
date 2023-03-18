@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-@Transactional
+//@Transactional
 public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse, Long> {
 
     private final NewsRepository newsRepository;
@@ -42,7 +42,6 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
     }
 
     @Override
-//    @ValidateNewsId
     public NewsDtoResponse readById(Long id) {
         NewsModel newsModel = newsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
@@ -51,15 +50,20 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
         return mapper.modelToDto(newsModel);
     }
 
-
     @Override
     public NewsDtoResponse create(NewsDtoRequest dtoRequest) {
+        AuthorModel authorModel = null;
         NewsModel model = mapper.dtoToModel(dtoRequest);
+        if (dtoRequest.authorId() != null) {
+            authorModel = authorRepository.findById(dtoRequest.authorId())
+                    .orElseThrow(() -> new NotFoundException(
+                            String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.authorId())
+                    ));
+        }
 
         if (dtoRequest.tagId() != null) {
             TagModel tagModel = tagRepository.findById(dtoRequest.tagId())
                     .orElseThrow(() -> new NotFoundException("Tag not found with the given ID"));
-//            model.setTagModels(Collections.singletonList(tagModel));
             model.setTagModels(Collections.singletonList(tagModel));
         }
 
@@ -67,24 +71,8 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
         return mapper.modelToDto(newsModel);
     }
 
-//    @Override
-//    public NewsDtoResponse create(NewsDtoRequest dtoRequest) {
-//        NewsModel model = mapper.dtoToModel(dtoRequest);
-//
-//        List<Long> tagIds = dtoRequest.tagIds();
-//        if (tagIds != null && !tagIds.isEmpty()) {
-//            List<TagModel> tagModels = tagRepository.findAllById(tagIds);
-//            model.setTagModels(tagModels);
-//        }
-//
-//        NewsModel newsModel = newsRepository.save(model);
-//        return mapper.modelToDto(newsModel);
-//    }
-
-
     @Override
     public NewsDtoResponse update(NewsDtoRequest dtoRequest) {
-        // Fetch the existing news model by id
         NewsModel existingNewsModel = newsRepository.findById(dtoRequest.id())
                 .orElseThrow(() -> new NotFoundException(
                         String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())
@@ -104,39 +92,14 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
                     .orElseThrow(() -> new NotFoundException(
                             String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.tagId())
                     ));
-            existingNewsModel.setTagModels(Collections.singletonList(tagModel));
+            List<TagModel> tagModels = existingNewsModel.getTagModels();
+            tagModels.add(tagModel);
+            existingNewsModel.setTagModels(tagModels);
         }
         NewsModel updatedNewsModel = newsRepository.save(existingNewsModel);
         return mapper.modelToDto(updatedNewsModel);
     }
 
-//    @Override
-//    public NewsDtoResponse update(NewsDtoRequest dtoRequest) {
-//        // Fetch the existing news model by id
-//        NewsModel existingNewsModel = newsRepository.findById(dtoRequest.id())
-//                .orElseThrow(() -> new NotFoundException(
-//                        String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())
-//                ));
-//        existingNewsModel.setTitle(dtoRequest.title());
-//        existingNewsModel.setContent(dtoRequest.content());
-//
-//        if (dtoRequest.authorId() != null) {
-//            AuthorModel authorModel = authorRepository.findById(dtoRequest.authorId())
-//                    .orElseThrow(() -> new NotFoundException(
-//                            String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.authorId())
-//                    ));
-//            existingNewsModel.setAuthorModel(authorModel);
-//        }
-//
-//        List<Long> tagIds = dtoRequest.tagIds();
-//        if (tagIds != null && !tagIds.isEmpty()) {
-//            List<TagModel> tagModels = tagRepository.findAllById(tagIds);
-//            existingNewsModel.setTagModels(tagModels);
-//        }
-//
-//        NewsModel updatedNewsModel = newsRepository.save(existingNewsModel);
-//        return mapper.modelToDto(updatedNewsModel);
-//    }
 
 
     @Override
@@ -148,15 +111,16 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
     }
 
     public NewsDtoResponse getNewsByParams(String tagNames, Long tagIds, String authorName, String title, String content) {
-        NewsModel newsModels = newsRepository.getNewsByParams(
+        List<NewsModel> newsModels = newsRepository.getNewsByParams(
                 tagNames == null ? null : Arrays.asList(tagNames.split(",")),
                 tagIds == null ? null : Collections.singletonList(tagIds),
                 authorName,
                 title,
                 content);
-        if (newsModels.equals(null)) {
+        if (newsModels.isEmpty()) {
             throw new NotFoundException("No news items found with the specified criteria.");
         }
-        return this.mapper.modelToDto(newsModels);
+        return this.mapper.modelToDto(newsModels.get(0));
     }
+
 }

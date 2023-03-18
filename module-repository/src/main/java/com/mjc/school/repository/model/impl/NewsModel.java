@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -111,6 +112,13 @@ public class NewsModel implements BaseEntity<Long> {
 
     public void setTagModels(List<TagModel> tagModels) {
         this.tagModels = tagModels;
+    }
+
+    public void addTagModel(TagModel tagModel) {
+        if (this.tagModels == null) {
+            this.tagModels = new ArrayList<>();
+        }
+        this.tagModels.add(tagModel);
     }
 
 

@@ -15,9 +15,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@Transactional
+//@Transactional
 public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> {
 
     //    private final JpaRepository<AuthorModel, Long> authorRepository;
@@ -46,11 +47,13 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
         return this.mapper.modelToDto(authorModel);
     }
 
+    @Override
     public AuthorDtoResponse readAuthorByNewsId(Long newsId) {
         NewsModel newsModel = newsRepository.findById(newsId)
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), newsId)));
         AuthorModel authorModel = newsModel.getAuthorModel();
-        return mapper.modelAuthorNameToDto(authorModel);
+        return mapper.modelToDto(authorModel);
+//        return mapper.modelAuthorNameToDto(authorModel);
     }
 
 
@@ -78,10 +81,6 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
         return true;
     }
 
-    @Override
-    public List<AuthorDtoResponse> readTagsByNewsId(Long id) {
-        return new ArrayList<>();
-    }
 }
 
 
