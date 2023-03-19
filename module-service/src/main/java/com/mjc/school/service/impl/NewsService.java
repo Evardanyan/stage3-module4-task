@@ -7,11 +7,14 @@ import com.mjc.school.repository.model.impl.AuthorModel;
 import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.repository.model.impl.TagModel;
 import com.mjc.school.service.BaseService;
+import com.mjc.school.service.dto.AuthorDtoResponse;
 import com.mjc.school.service.dto.NewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
 import com.mjc.school.service.exception.NotFoundException;
 import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.NewsModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,10 +39,18 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
         this.mapper = mapper;
     }
 
+//    @Override
+//    public List<NewsDtoResponse> readAll() {
+//        return mapper.modelListToDtoList(newsRepository.findAll());
+//    }
+
     @Override
-    public List<NewsDtoResponse> readAll() {
-        return mapper.modelListToDtoList(newsRepository.findAll());
+    public Page<NewsDtoResponse> readAll(Pageable pageable) {
+        Page<NewsModel> newsPage = newsRepository.findAll(pageable);
+        return newsPage.map(newsModel -> mapper.modelToDto(newsModel));
     }
+
+
 
     @Override
     public NewsDtoResponse readById(Long id) {
@@ -57,7 +68,7 @@ public class NewsService implements BaseService<NewsDtoRequest, NewsDtoResponse,
         if (dtoRequest.authorId() != null) {
             authorModel = authorRepository.findById(dtoRequest.authorId())
                     .orElseThrow(() -> new NotFoundException(
-                            String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.authorId())
+                            String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.authorId())
                     ));
         }
 

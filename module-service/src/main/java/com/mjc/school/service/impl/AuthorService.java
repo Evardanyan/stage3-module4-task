@@ -10,6 +10,8 @@ import com.mjc.school.service.dto.AuthorDtoResponse;
 import com.mjc.school.service.exception.NotFoundException;
 import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.AuthorModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,14 +35,19 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
         this.mapper = mapper;
     }
 
+//    @Override
+//    public List<AuthorDtoResponse> readAll() {
+//        List<AuthorModel> authorModels = this.authorRepository.findAll();
+//        return this.mapper.modelListToDtoList(authorModels);
+//    }
+
     @Override
-    public List<AuthorDtoResponse> readAll() {
-        List<AuthorModel> authorModels = this.authorRepository.findAll();
-        return this.mapper.modelListToDtoList(authorModels);
+    public Page<AuthorDtoResponse> readAll(Pageable pageable) {
+        Page<AuthorModel> authorPage = authorRepository.findAll(pageable);
+        return authorPage.map(authorModel -> mapper.modelToDto(authorModel));
     }
 
     @Override
-//    @ValidateAuthorId
     public AuthorDtoResponse readById(Long id) {
         AuthorModel authorModel = authorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), id)));

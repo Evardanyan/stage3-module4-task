@@ -60,7 +60,7 @@ public class WebExceptionHandler {
     public ResponseEntity<ExceptionDetails> handleEntityNotFoundException(NotFoundException exception) {
         ExceptionDetails exceptionDetails = new ExceptionDetails(
                 exception.getMessage(),
-//                exception.getClass().getSimpleName(),
+                exception.getClass().getSimpleName(),
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(exceptionDetails);
@@ -88,7 +88,7 @@ public class WebExceptionHandler {
     public ResponseEntity<ExceptionDetails> handleException(Exception ex) {
         ExceptionDetails exceptionDetails = new ExceptionDetails(
                 ex.getMessage(),
-//                ex.getClass().getSimpleName(),
+                ex.getClass().getSimpleName(),
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(exceptionDetails);

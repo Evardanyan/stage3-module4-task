@@ -17,6 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -41,6 +45,7 @@ class NewsServiceTest {
     private NewsModelMapper mapper;
 
     @InjectMocks
+//    @Mock
     private NewsService newsService;
 
     private NewsDtoRequest newsDtoRequest;
@@ -59,6 +64,7 @@ class NewsServiceTest {
 
     @BeforeEach
     void setUp() {
+        System.out.println("Executing setUp()...");
 
         newsDtoRequest = new NewsDtoRequest(1L, "Test News Title", "Test News Content", 1L);
 
@@ -83,11 +89,11 @@ class NewsServiceTest {
         newsModel.setCreateDate(now);
 
 
-        List<NewsModel> newsModels = Arrays.asList(
+        newsModels = Arrays.asList(
                 new NewsModel(1L, "News 1", "This is news 1", authorModel),
                 new NewsModel(2L, "News 2", "This is news 2", authorSecondModel)
         );
-        List<NewsDtoResponse> expectedDtos = Arrays.asList(
+        expectedDtos = Arrays.asList(
                 new NewsDtoResponse(1L, "Test News Title", "Test News Content", now, 1L),
                 new NewsDtoResponse(2L, "Test News Title 2", "Test News Content 2", now, 2L)
         );
@@ -97,6 +103,7 @@ class NewsServiceTest {
     @Test
     void createNews_Success() {
         when(mapper.dtoToModel(any(NewsDtoRequest.class))).thenReturn(newsModel);
+        when(authorRepository.findById(anyLong())).thenReturn(Optional.of(authorModel));
         when(newsRepository.save(any(NewsModel.class))).thenReturn(newsModel);
         when(mapper.modelToDto(any(NewsModel.class))).thenReturn(newsDtoResponse);
 
@@ -108,7 +115,10 @@ class NewsServiceTest {
         assertEquals(newsDtoResponse.content(), result.content());
         assertEquals(newsDtoResponse.authorId(), result.authorId());
         assertEquals(newsDtoResponse.createDate(), result.createDate());
+
+        verify(authorRepository, times(1)).findById(anyLong());
     }
+
 
     @DisplayName("JUnit test for update method")
     @Test
@@ -137,20 +147,51 @@ class NewsServiceTest {
     }
 
 
+//    @DisplayName("JUnit test for readAll method")
+//    @Test
+//    void testReadAll() {
+//
+//        when(newsRepository.findAll()).thenReturn(newsModels);
+//        when(mapper.modelListToDtoList(newsModels)).thenReturn(expectedDtos);
+//
+//        List<NewsDtoResponse> actualDtos = newsService.readAll();
+//
+//        assertEquals(expectedDtos, actualDtos);
+//        verify(newsRepository).findAll();
+//        verify(mapper).modelListToDtoList(newsModels);
+//    }
 
-    @DisplayName("JUnit test for readAll method")
+
     @Test
+    @DisplayName("Should return a page of news DTOs when readAll is called with valid page request")
     void testReadAll() {
+        // Arrange
+        int page = 0;
+        int size = 2;
+        String sort = "id";
+        String direction = "asc";
+        Sort sortable = Sort.by(sort);
+        if (direction.equalsIgnoreCase("desc")) {
+            sortable = sortable.descending();
+        }
 
-        when(newsRepository.findAll()).thenReturn(newsModels);
-        when(mapper.modelListToDtoList(newsModels)).thenReturn(expectedDtos);
+        PageRequest pageRequest = PageRequest.of(page, size, sortable);
 
-        List<NewsDtoResponse> actualDtos = newsService.readAll();
+        Page<NewsModel> newsModelPage = new PageImpl<>(newsModels, pageRequest, newsModels.size());
 
-        assertEquals(expectedDtos, actualDtos);
-        verify(newsRepository).findAll();
-        verify(mapper).modelListToDtoList(newsModels);
+        Page<NewsDtoResponse> expectedDtoPage = new PageImpl<>(expectedDtos, pageRequest, newsModels.size());
+
+        when(newsRepository.findAll(pageRequest)).thenReturn(newsModelPage);
+        when(mapper.modelToDto(newsModels.get(0))).thenReturn(expectedDtos.get(0));
+        when(mapper.modelToDto(newsModels.get(1))).thenReturn(expectedDtos.get(1));
+
+        Page<NewsDtoResponse> actualDtoPage = newsService.readAll(pageRequest);
+
+        assertEquals(expectedDtoPage, actualDtoPage);
+        verify(newsRepository).findAll(pageRequest);
+        verify(mapper, times(2)).modelToDto(any(NewsModel.class));
     }
+
 
     @DisplayName("JUnit test for readById method")
     @Test
@@ -172,24 +213,25 @@ class NewsServiceTest {
     @Test
     void testDeleteById() {
         Long id = 1L;
-        when(newsRepository.existsById(id)).thenReturn(true);
+
+        when(newsRepository.findById(id)).thenReturn(Optional.of(newsModel));
         doNothing().when(newsRepository).deleteById(id);
 
         boolean deleted = newsService.deleteById(id);
 
         assertTrue(deleted);
-        verify(newsRepository).existsById(id);
-        verify(newsRepository).deleteById(id);
+        verify(newsRepository, times(1)).findById(id);
+        verify(newsRepository, times(1)).deleteById(id);
     }
 
     @DisplayName("JUnit test for deleteByIdNonExisting")
     @Test
     void testDeleteByIdNonExisting() {
+
         Long id = 1L;
-        when(newsRepository.existsById(id)).thenReturn(false);
+        when(newsRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> newsService.deleteById(id));
-        verify(newsRepository, times(1)).existsById(id);
         verify(newsRepository, never()).deleteById(id);
     }
 }

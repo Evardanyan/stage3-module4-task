@@ -1,14 +1,38 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.service.dto.NewsDtoResponse;
+import com.mjc.school.service.dto.TagDtoResponse;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
+
+
 
 public interface BaseController<T, R, K> {
 
-    ResponseEntity<List<R>> readAll();
+
+    default ResponseEntity<Page<R>> readAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "name") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+
+        Sort sortable = Sort.by(sort);
+        if (direction.equalsIgnoreCase("desc")) {
+            sortable = sortable.descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(sort));
+        Page<R> pageResult = new PageImpl<>(Collections.emptyList(), pageable, 0);
+        return ResponseEntity.ok(pageResult);
+    }
+
 
     ResponseEntity<R> readById(@Valid K id);
 

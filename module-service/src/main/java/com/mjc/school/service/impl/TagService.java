@@ -10,18 +10,18 @@ import com.mjc.school.service.exception.NotFoundException;
 import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.TagModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 //@Transactional
 public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Long> {
 //    private final JpaRepository<TagModel, Long> baseRepository;
-    private final TagRepository tagrepository;
+    private final TagRepository tagRepository;
 
     @Autowired
     private JpaRepository<NewsModel, Long> newsRepository;
@@ -30,7 +30,7 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
 
     @Autowired
     public TagService(TagRepository tagRepository, TagModelMapper mapper) {
-        this.tagrepository = tagRepository;
+        this.tagRepository = tagRepository;
         this.mapper = mapper;
     }
 
@@ -42,14 +42,21 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
         return mapper.modelListToDtoList(tagModels);
     }
 
+//    @Override
+//    public List<TagDtoResponse> readAll() {
+//        return mapper.modelListToDtoList(this.tagrepository.findAll());
+//    }
+
+
     @Override
-    public List<TagDtoResponse> readAll() {
-        return mapper.modelListToDtoList(this.tagrepository.findAll());
+    public Page<TagDtoResponse> readAll(Pageable pageable) {
+        Page<TagModel> tagsPage = tagRepository.findAll(pageable);
+        return tagsPage.map(tagsModel -> this.mapper.modelToDto(tagsModel));
     }
 
     @Override
     public TagDtoResponse readById(Long id) {
-        TagModel tagModel = this.tagrepository.findById(id)
+        TagModel tagModel = this.tagRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
         return this.mapper.modelToDto(tagModel);
     }
@@ -57,24 +64,24 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
     @Override
     public TagDtoResponse create(TagDtoRequest dtoRequest) {
         TagModel model = this.mapper.dtoToModel(dtoRequest);
-        TagModel tagModel = this.tagrepository.save(model);
+        TagModel tagModel = this.tagRepository.save(model);
         return this.mapper.modelToDto(tagModel);
     }
 
     @Override
     public TagDtoResponse update(TagDtoRequest dtoRequest) {
-        TagModel tagModel = tagrepository.findById(dtoRequest.id())
+        TagModel tagModel = tagRepository.findById(dtoRequest.id())
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())));
         tagModel = mapper.dtoToModel(dtoRequest);
-        tagModel = tagrepository.save(tagModel);
+        tagModel = tagRepository.save(tagModel);
         return mapper.modelToDto(tagModel);
     }
 
     @Override
     public boolean deleteById(Long id) {
-        tagrepository.findById(id)
+        tagRepository.findById(id)
                 .orElseThrow(() ->  new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
-        tagrepository.deleteById(id);
+        tagRepository.deleteById(id);
         return true;
     }
 }

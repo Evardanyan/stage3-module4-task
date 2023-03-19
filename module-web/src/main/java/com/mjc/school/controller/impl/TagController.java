@@ -1,14 +1,14 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.controller.annotation.CommandHandler;
 import com.mjc.school.service.BaseService;
-import com.mjc.school.service.dto.NewsDtoResponse;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +26,25 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
         this.service = service;
     }
 
+
     @Override
     @GetMapping
-    public ResponseEntity<List<TagDtoResponse>> readAll() {
-//        List<TagDtoResponse> tags = service.readAll();
-//        return ResponseEntity.ok(tags);
-        return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
+    public ResponseEntity<Page<TagDtoResponse>> readAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "name") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+
+        Sort sortable = Sort.by(sort);
+        if (direction.equalsIgnoreCase("desc")) {
+            sortable = sortable.descending();
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, sortable);
+
+        Page<TagDtoResponse> tagsPage = service.readAll(pageRequest);
+
+        return new ResponseEntity<>(tagsPage, HttpStatus.OK);
     }
 
     @Override

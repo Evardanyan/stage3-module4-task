@@ -4,16 +4,15 @@ import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
-import com.sun.istack.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import java.util.List;
 
 @RestController
 //@RequestMapping(value = "/api/v1/authors", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
@@ -30,17 +29,28 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
 
     @Override
     @GetMapping
-    public ResponseEntity<List<AuthorDtoResponse>> readAll() {
-//        List<AuthorDtoResponse> authors = service.readAll();
-//        return ResponseEntity.ok(authors);
-        return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
+    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "name") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+
+        Sort sortable = Sort.by(sort);
+        if (direction.equalsIgnoreCase("desc")) {
+            sortable = sortable.descending();
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, sortable);
+
+        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
+
+        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
     }
 
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
     public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
-//        return ResponseEntity.ok(service.readById(id));
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 

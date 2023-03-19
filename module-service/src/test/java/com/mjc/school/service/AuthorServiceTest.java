@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,7 +94,6 @@ class AuthorServiceTest {
         assertEquals(authorDtoResponse, result);
     }
 
-
     @DisplayName("JUnit test for readAll method")
     @Test
     void testReadAll() {
@@ -105,13 +105,17 @@ class AuthorServiceTest {
         authorDtoResponses.add(new AuthorDtoResponse(1L, "Author Name 1", now, now));
         authorDtoResponses.add(new AuthorDtoResponse(2L, "Author Name 2", now, now));
 
-        when(authorRepository.findAll()).thenReturn(authorModels);
-        when(mapper.modelListToDtoList(authorModels)).thenReturn(authorDtoResponses);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
+        Page<AuthorModel> authorPage = new PageImpl<>(authorModels, pageable, authorModels.size());
+        when(authorRepository.findAll(pageable)).thenReturn(authorPage);
+        when(mapper.modelToDto(authorModels.get(0))).thenReturn(authorDtoResponses.get(0));
+        when(mapper.modelToDto(authorModels.get(1))).thenReturn(authorDtoResponses.get(1));
 
-        List<AuthorDtoResponse> result = authorService.readAll();
+        Page<AuthorDtoResponse> result = authorService.readAll(pageable);
 
-        assertEquals(authorDtoResponses, result);
+        assertEquals(authorDtoResponses, result.getContent());
     }
+
 
 
     @DisplayName("JUnit test for readById method")

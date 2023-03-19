@@ -1,19 +1,18 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.controller.annotation.CommandHandler;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.NewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/news")
@@ -29,10 +28,22 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
 
     @Override
     @GetMapping
-    public ResponseEntity<List<NewsDtoResponse>> readAll() {
-//        List<NewsDtoResponse> news = service.readAll();
-//        return ResponseEntity.ok(news);
-        return new ResponseEntity<>(service.readAll(), HttpStatus.OK);
+    public ResponseEntity<Page<NewsDtoResponse>> readAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "title") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+
+        Sort sortable = Sort.by(sort);
+        if (direction.equalsIgnoreCase("desc")) {
+            sortable = sortable.descending();
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, sortable);
+
+        Page<NewsDtoResponse> newsPage = service.readAll(pageRequest);
+
+        return new ResponseEntity<>(newsPage, HttpStatus.OK);
     }
 
     @Override
@@ -66,7 +77,7 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
     @GetMapping("/search")
     public ResponseEntity<NewsDtoResponse> getNewsByParams(@Valid @RequestParam(required = false) String tagName,
                                                            @Valid @RequestParam(required = false) Long tagId,
-                                                           @Valid  @RequestParam(required = false) String authorName,
+                                                           @Valid @RequestParam(required = false) String authorName,
                                                            @Valid @RequestParam(required = false) String title,
                                                            @Valid @RequestParam(required = false) String content) {
         NewsDtoResponse response = service.getNewsByParams(tagName, tagId, authorName, title, content);

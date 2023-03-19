@@ -15,6 +15,7 @@ public interface NewsModelMapper {
 
     public List<NewsDtoResponse> modelListToDtoList(List<NewsModel> var1);
 
+
     @Mapping(target = "authorId", source = "authorModel.id")
     @Mapping(target = "tagList", source = "tagModels")
     public NewsDtoResponse modelToDto(NewsModel var1);

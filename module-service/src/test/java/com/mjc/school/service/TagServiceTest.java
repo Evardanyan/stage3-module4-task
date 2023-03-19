@@ -16,6 +16,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +95,25 @@ class TagServiceTest {
     }
 
 
+//    @DisplayName("JUnit test for readAll method")
+//    @Test
+//    void testReadAll() {
+//        List<TagModel> tagModels = new ArrayList<>();
+//        tagModels.add(new TagModel(1L, "Tag name 1"));
+//        tagModels.add(new TagModel(2L, "Tag name 2"));
+//
+//        List<TagDtoResponse> tagDtoResponses = new ArrayList<>();
+//        tagDtoResponses.add(new TagDtoResponse(1L, "Tag name 1"));
+//        tagDtoResponses.add(new TagDtoResponse(2L, "Tag name 2"));
+//
+//        when(tagRepository.findAll()).thenReturn(tagModels);
+//        when(mapper.modelListToDtoList(tagModels)).thenReturn(tagDtoResponses);
+//
+//        List<TagDtoResponse> result = tagService.readAll();
+//
+//        assertEquals(tagDtoResponses, result);
+//    }
+
     @DisplayName("JUnit test for readAll method")
     @Test
     void testReadAll() {
@@ -102,12 +125,19 @@ class TagServiceTest {
         tagDtoResponses.add(new TagDtoResponse(1L, "Tag name 1"));
         tagDtoResponses.add(new TagDtoResponse(2L, "Tag name 2"));
 
-        when(tagRepository.findAll()).thenReturn(tagModels);
-        when(mapper.modelListToDtoList(tagModels)).thenReturn(tagDtoResponses);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        List<TagDtoResponse> result = tagService.readAll();
+        Page<TagModel> tagsPage = new PageImpl<>(tagModels, pageable, tagModels.size());
 
-        assertEquals(tagDtoResponses, result);
+        when(tagRepository.findAll(pageable)).thenReturn(tagsPage);
+        when(mapper.modelToDto(tagModels.get(0))).thenReturn(tagDtoResponses.get(0));
+        when(mapper.modelToDto(tagModels.get(1))).thenReturn(tagDtoResponses.get(1));
+
+        Page<TagDtoResponse> result = tagService.readAll(pageable);
+
+        assertEquals(tagDtoResponses, result.getContent());
+        assertEquals(tagModels.size(), result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
     }
 
 
