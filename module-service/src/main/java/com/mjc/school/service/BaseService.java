@@ -22,6 +22,9 @@ public interface BaseService<T, R, K> {
    default List<R> readTagsByNewsId(K id) {
        return Collections.emptyList();
    }
+   default List<R> readCommentsByNewsId(K id) {
+       return Collections.emptyList();
+   }
 
    default R readAuthorByNewsId(K id) {
        return null;

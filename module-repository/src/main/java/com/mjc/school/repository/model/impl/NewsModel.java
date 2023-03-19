@@ -45,6 +45,9 @@ public class NewsModel implements BaseEntity<Long> {
     )
     private List<TagModel> tagModels;
 
+    @OneToMany(mappedBy = "news")
+    private List<CommentModel> comments;
+
 
     public NewsModel() {
     }
@@ -123,6 +126,13 @@ public class NewsModel implements BaseEntity<Long> {
         this.tagModels.add(tagModel);
     }
 
+    public List<CommentModel> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentModel> comments) {
+        this.comments = comments;
+    }
 
     @Override
     public boolean equals(Object o) {
