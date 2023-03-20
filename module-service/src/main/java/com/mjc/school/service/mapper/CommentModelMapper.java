@@ -2,6 +2,7 @@ package com.mjc.school.service.mapper;
 
 import com.mjc.school.repository.model.impl.CommentModel;
 import com.mjc.school.repository.model.impl.TagModel;
+import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
 import com.mjc.school.service.dto.TagDtoRequest;
 import org.mapstruct.Mapper;
@@ -13,9 +14,9 @@ import java.util.List;
 public interface CommentModelMapper {
     public List<CommentDtoResponse> modelListToDtoList(List<CommentModel> var1);
 
-    public CommentDtoResponse modelToDto(TagModel var1);
+    public CommentDtoResponse modelToDto(CommentModel var1);
 
     @Mapping(target = "news.id", source = "newsId")
-    public CommentModel dtoToModel(TagDtoRequest var1);
+    public CommentModel dtoToModel(CommentDtoRequest var1);
 
 }

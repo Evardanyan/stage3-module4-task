@@ -53,32 +53,32 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
     }
 
     @Override
-    public TagDtoResponse readById(Long id) {
-        TagModel tagModel = this.commentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
-        return this.mapper.modelToDto(tagModel);
+    public CommentDtoResponse readById(Long id) {
+        CommentModel commentModel = commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.COMMENT_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
+        return mapper.modelToDto(commentModel);
     }
 
     @Override
-    public TagDtoResponse create(TagDtoRequest dtoRequest) {
-        TagModel model = this.mapper.dtoToModel(dtoRequest);
-        TagModel tagModel = this.commentRepository.save(model);
-        return this.mapper.modelToDto(tagModel);
+    public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
+        CommentModel model = mapper.dtoToModel(dtoRequest);
+        CommentModel commentModel = commentRepository.save(model);
+        return mapper.modelToDto(commentModel);
     }
 
     @Override
-    public TagDtoResponse update(TagDtoRequest dtoRequest) {
-        TagModel tagModel = commentRepository.findById(dtoRequest.id())
-                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())));
-        tagModel = mapper.dtoToModel(dtoRequest);
-        tagModel = commentRepository.save(tagModel);
-        return mapper.modelToDto(tagModel);
+    public CommentDtoResponse update(CommentDtoRequest dtoRequest) {
+        CommentModel commentModel = commentRepository.findById(dtoRequest.id())
+                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.COMMENT_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())));
+        commentModel = mapper.dtoToModel(dtoRequest);
+        commentModel = commentRepository.save(commentModel);
+        return mapper.modelToDto(commentModel);
     }
 
     @Override
     public boolean deleteById(Long id) {
         commentRepository.findById(id)
-                .orElseThrow(() ->  new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
+                .orElseThrow(() ->  new NotFoundException(String.format(ServiceErrorCodeMessage.COMMENT_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
         commentRepository.deleteById(id);
         return true;
     }

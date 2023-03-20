@@ -4,7 +4,7 @@ public enum ServiceErrorCodeMessage {
     NEWS_ID_DOES_NOT_EXIST("001", "News with id %d does not exist."),
     AUTHOR_ID_DOES_NOT_EXIST("002","Author Id does not exist. Author Id is: %s"),
 
-    TAG_ID_DOES_NOT_EXIST("010","Tag Id does not exist. Tag Id is: %s"),
+    TAG_ID_DOES_NOT_EXIST("011","Tag Id does not exist. Tag Id is: %s"),
 
     VALIDATE_NEGATIVE_OR_NULL_NUMBER("003", "%s can not be null or less than 1. %s is: %s"),
     VALIDATE_NULL_STRING("004", "%s can not be null. %s is null"),
@@ -17,7 +17,9 @@ public enum ServiceErrorCodeMessage {
 
     TAG_ID_ALREADY_EXIST("009","Tag Id already exist. Tag Id is: %s"),
 
-    AUTHOR_NAME_ALREADY_EXIST("010","Author name already exist. Author name is: %s");
+    AUTHOR_NAME_ALREADY_EXIST("010","Author name already exist. Author name is: %s"),
+
+    COMMENT_ID_DOES_NOT_EXIST("012", "News with id %d does not exist.");
 
 
 

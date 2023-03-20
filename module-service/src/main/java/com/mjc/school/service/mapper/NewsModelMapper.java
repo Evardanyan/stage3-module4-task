@@ -1,6 +1,7 @@
 package com.mjc.school.service.mapper;
 
 import com.mjc.school.repository.model.impl.AuthorModel;
+import com.mjc.school.repository.model.impl.CommentModel;
 import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.repository.model.impl.TagModel;
 import com.mjc.school.service.dto.NewsDtoRequest;
@@ -18,7 +19,17 @@ public interface NewsModelMapper {
 
     @Mapping(target = "authorId", source = "authorModel.id")
     @Mapping(target = "tagList", source = "tagModels")
+//    @Mapping(target = "comments", source = "commentId", qualifiedByName = "commentIdToCommentModel")
     public NewsDtoResponse modelToDto(NewsModel var1);
+
+//    @Named("commentIdToCommentModel")
+//    default List<CommentModel> commentIdToCommentModel(Long commentId) {
+//        if (commentId == null) {
+//            return Collections.emptyList();
+//        } else {
+//            return Collections.singletonList(new CommentModel(commentId));
+//        }
+//    }
 
 
     @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true),

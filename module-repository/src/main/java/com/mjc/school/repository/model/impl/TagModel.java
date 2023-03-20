@@ -31,7 +31,8 @@ public class TagModel implements BaseEntity<Long> {
     public TagModel() {
     }
 
-    public TagModel(Long tagId) {
+    public TagModel(Long tagId) { //230321
+        this.id = tagId;
     }
 
     @Override

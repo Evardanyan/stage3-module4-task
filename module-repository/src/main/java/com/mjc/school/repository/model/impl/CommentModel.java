@@ -25,6 +25,24 @@ public class CommentModel implements BaseEntity<Long> {
     @JoinColumn(name = "news_id", nullable = false)
     private NewsModel news;
 
+    public CommentModel() {
+    }
+
+    public CommentModel(Long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+
+    public CommentModel(Long id) {
+        this.id = id;
+    }
+
+    public CommentModel(Long id, String content, NewsModel news) {
+        this.id = id;
+        this.content = content;
+        this.news = news;
+    }
+
     @Override
     public Long getId() {
         return null;
@@ -33,6 +51,22 @@ public class CommentModel implements BaseEntity<Long> {
     @Override
     public void setId(Long id) {
 
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public NewsModel getNews() {
+        return news;
+    }
+
+    public void setNews(NewsModel news) {
+        this.news = news;
     }
 
     @Override
