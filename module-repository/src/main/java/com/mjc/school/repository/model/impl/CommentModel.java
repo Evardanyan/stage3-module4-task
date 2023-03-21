@@ -45,7 +45,7 @@ public class CommentModel implements BaseEntity<Long> {
 
     @Override
     public Long getId() {
-        return null;
+        return id;
     }
 
     @Override
@@ -80,5 +80,14 @@ public class CommentModel implements BaseEntity<Long> {
     @Override
     public int hashCode() {
         return Objects.hash(id, content, news);
+    }
+
+    @Override
+    public String toString() {
+        return "CommentModel{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", news=" + news +
+                '}';
     }
 }

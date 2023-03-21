@@ -33,8 +33,9 @@ public interface NewsModelMapper {
 
 
     @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true),
-            @Mapping(target = "authorModel.id", source = "authorId")})
+            @Mapping(target="comments", ignore = true), @Mapping(target = "authorModel.id", source = "authorId")})
     @Mapping(target = "tagModels", source = "tagId", qualifiedByName = "tagIdToTagModel")
+
     public NewsModel dtoToModel(NewsDtoRequest var1);
 
 

@@ -1,6 +1,7 @@
 package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.impl.CommentRepository;
+import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.impl.CommentModel;
 import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.repository.model.impl.TagModel;
@@ -26,14 +27,17 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
 //    private final JpaRepository<TagModel, Long> baseRepository;
     private final CommentRepository commentRepository;
 
-    @Autowired
-    private JpaRepository<NewsModel, Long> newsRepository;
+//    @Autowired
+//    private JpaRepository<NewsModel, Long> newsRepository;
+//    @Autowired
+    private NewsRepository newsRepository;
 
     private CommentModelMapper mapper;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, CommentModelMapper mapper) {
+    public CommentService(CommentRepository commentRepository, NewsRepository newsRepository, CommentModelMapper mapper) {
         this.commentRepository = commentRepository;
+        this.newsRepository = newsRepository;
         this.mapper = mapper;
     }
 
@@ -65,6 +69,7 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
         CommentModel commentModel = commentRepository.save(model);
         return mapper.modelToDto(commentModel);
     }
+
 
     @Override
     public CommentDtoResponse update(CommentDtoRequest dtoRequest) {
