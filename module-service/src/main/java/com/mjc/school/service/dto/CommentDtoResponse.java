@@ -1,4 +1,8 @@
 package com.mjc.school.service.dto;
 
-public record CommentDtoResponse(Long id, String content) {
+import com.mjc.school.repository.model.impl.NewsModel;
+
+import java.util.List;
+
+public record CommentDtoResponse(Long id, String content, NewsModel news) {
 }

@@ -14,6 +14,7 @@ import java.util.List;
 public interface CommentModelMapper {
     public List<CommentDtoResponse> modelListToDtoList(List<CommentModel> var1);
 
+    @Mapping(target = "news", source = "news")
     public CommentDtoResponse modelToDto(CommentModel var1);
 
     @Mapping(target = "news.id", source = "newsId")
