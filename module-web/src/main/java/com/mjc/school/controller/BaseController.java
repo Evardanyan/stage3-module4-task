@@ -39,6 +39,9 @@ public interface BaseController<T, R, K> {
    default ResponseEntity<List<R>> readTagsByNewsId(@Valid K id) {
        return ResponseEntity.notFound().build();
    }
+   default ResponseEntity<List<R>> readCommentsByNewsId(@Valid K id) {
+       return ResponseEntity.notFound().build();
+   }
 
    default ResponseEntity<R> readAuthorByNewsId(@Valid K id) {
         return ResponseEntity.notFound().build();

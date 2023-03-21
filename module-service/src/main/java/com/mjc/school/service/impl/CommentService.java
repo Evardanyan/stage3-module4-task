@@ -63,12 +63,27 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
         return mapper.modelToDto(commentModel);
     }
 
+//    @Override
+//    public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
+//        CommentModel model = mapper.dtoToModel(dtoRequest);
+//        NewsModel newsModel = newsRepository.findById(dtoRequest.id())
+//                .orElse(null);
+//        model.setNews(newsModel);
+//        CommentModel commentModel = commentRepository.save(model);
+//        return mapper.modelToDto(commentModel);
+//    }
+
     @Override
     public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
+        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
+
         CommentModel model = mapper.dtoToModel(dtoRequest);
-        CommentModel commentModel = commentRepository.save(model);
-        return mapper.modelToDto(commentModel);
+        model.setNews(news);
+
+        CommentModel savedModel = commentRepository.save(model);
+        return mapper.modelToDto(savedModel);
     }
+
 
 
     @Override

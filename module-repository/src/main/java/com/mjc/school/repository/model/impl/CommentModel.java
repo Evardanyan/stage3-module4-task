@@ -50,7 +50,7 @@ public class CommentModel implements BaseEntity<Long> {
 
     @Override
     public void setId(Long id) {
-
+        this.id = id;
     }
 
     public String getContent() {
