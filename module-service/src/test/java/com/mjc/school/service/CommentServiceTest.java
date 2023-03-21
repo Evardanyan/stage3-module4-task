@@ -2,6 +2,7 @@ package com.mjc.school.service;
 
 
 import com.mjc.school.repository.impl.CommentRepository;
+import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.impl.CommentModel;
 import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.service.dto.CommentDtoRequest;
@@ -32,6 +33,8 @@ class CommentServiceTest {
 
     @Mock
     private CommentRepository commentRepository;
+    @Mock
+    private NewsRepository newsRepository;
 
     @InjectMocks
     private CommentService commentService;
@@ -47,12 +50,13 @@ class CommentServiceTest {
         CommentModel savedCommentModel = new CommentModel(1L, "New Comment", newsModel);
 
         when(mapper.dtoToModel(commentDtoRequest)).thenReturn(commentModel);
+        when(newsRepository.findById(1L)).thenReturn(Optional.of(newsModel));
         when(commentRepository.save(commentModel)).thenReturn(savedCommentModel);
-        when(mapper.modelToDto(savedCommentModel)).thenReturn(new CommentDtoResponse(1L, "New Comment"));
+        when(mapper.modelToDto(savedCommentModel)).thenReturn(new CommentDtoResponse(1L, "New Comment", newsModel));
 
         CommentDtoResponse result = commentService.create(commentDtoRequest);
 
-        assertEquals(new CommentDtoResponse(1L, "New Comment"), result);
+        assertEquals(new CommentDtoResponse(1L, "New Comment", newsModel), result);
         verify(mapper, times(1)).dtoToModel(commentDtoRequest);
         verify(commentRepository, times(1)).save(commentModel);
         verify(mapper, times(1)).modelToDto(savedCommentModel);
@@ -75,7 +79,7 @@ class CommentServiceTest {
 
         CommentDtoRequest commentDtoRequest = new CommentDtoRequest(id, "News Comments", id);
 
-        CommentDtoResponse commentDtoResponse = new CommentDtoResponse(id, "News Comments");
+        CommentDtoResponse commentDtoResponse = new CommentDtoResponse(id, "News Comments", newsModel);
 
         when(commentRepository.findById(id)).thenReturn(Optional.of(commentModel));
         when(mapper.dtoToModel(commentDtoRequest)).thenReturn(commentModel);
@@ -94,12 +98,12 @@ class CommentServiceTest {
 
         NewsModel newsModel = new NewsModel();
         List<CommentModel> comments = new ArrayList<>();
-        comments.add(new CommentModel(1L, "Comment Name 1"));
-        comments.add(new CommentModel(2L, "Comment Name 2"));
+        comments.add(new CommentModel(1L, "Comment Name 1", newsModel));
+        comments.add(new CommentModel(2L, "Comment Name 2", newsModel));
 
         List<CommentDtoResponse> commentDtoResponses = new ArrayList<>();
-        commentDtoResponses.add(new CommentDtoResponse(1L, "Comment Name 1"));
-        commentDtoResponses.add(new CommentDtoResponse(2L, "Comment Name 2"));
+        commentDtoResponses.add(new CommentDtoResponse(1L, "Comment Name 1", newsModel));
+        commentDtoResponses.add(new CommentDtoResponse(2L, "Comment Name 2", newsModel));
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
         Page<CommentModel> commentPage = new PageImpl<>(comments, pageable, comments.size());
@@ -126,7 +130,7 @@ class CommentServiceTest {
         commentModel.setNews(newsModel);
 
 
-        CommentDtoResponse commentDtoResponse = new CommentDtoResponse(id, "Comment Name");
+        CommentDtoResponse commentDtoResponse = new CommentDtoResponse(id, "Comment Name", newsModel);
 
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(commentModel));
         when(mapper.modelToDto(commentModel)).thenReturn(commentDtoResponse);
