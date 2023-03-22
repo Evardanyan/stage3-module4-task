@@ -20,6 +20,24 @@ subprojects {
 
     dependencies {
         implementation "org.springframework:spring-context:$springVersion"
+//--------------------------Rest assurance----------------------------------------------------------
+
+        testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+// https://mvnrepository.com/artifact/com.google.code.gson/gson
+        testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
+// https://mvnrepository.com/artifact/com.jayway.restassured/rest-assured
+//        testImplementation group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
+
+        implementation group: 'io.rest-assured', name: 'rest-assured',version:  '5.3.0'
+        // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+        implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.5'
+
+
+//--------------------------------------------------------------------------------------------------------
+
+
+
+
 
         testImplementation "org.springframework:spring-test:$springVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
@@ -50,7 +68,7 @@ subprojects {
     }
     test {
         useJUnitPlatform()
-
+//        useTestNG()
     }
 }
 

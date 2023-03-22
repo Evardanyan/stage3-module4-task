@@ -1,17 +1,18 @@
 package com.mjc.school.controller;
 
-import com.jayway.restassured.RestAssured;
-//import io.restassured.RestAssured;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
-import static com.jayway.restassured.RestAssured.given;
-//import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static io.restassured.RestAssured.given;
+
+
+
 
 public class CommentControllerRestTest {
 
-    @BeforeClass
-    public static void setUp() {
+    @BeforeEach
+    public void setUp() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 8080;
         RestAssured.basePath = "/api/v1";
@@ -21,4 +22,12 @@ public class CommentControllerRestTest {
     public void testGetComments() {
         given().get("/comments").then().assertThat().statusCode(200);
     }
+
+
+    @Test
+    public void testGetCommentsById() {
+        given().get("/comments/3").then().assertThat().statusCode(200);
+    }
+
+
 }
