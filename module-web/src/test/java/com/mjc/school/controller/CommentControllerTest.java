@@ -4,6 +4,7 @@ package com.mjc.school.controller;
 import com.mjc.school.service.impl.CommentService;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
+//import org.testng.annotations.Test;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -19,6 +20,8 @@ public class CommentControllerTest {
     private Long commentId;
 
     private Long newsId;
+
+    private long authorId;
 
 
     @BeforeEach
@@ -38,7 +41,7 @@ public class CommentControllerTest {
                 .statusCode(201)
                 .extract().path("id");
 
-        Long authorId = Long.valueOf(aId);
+        authorId = Long.valueOf(aId);
 
         Map<String, Object> newsBody = new HashMap<>();
         newsBody.put("title", "No One");
@@ -134,6 +137,20 @@ public class CommentControllerTest {
                 .get("/comments/" + commentIdToDelete)
                 .then()
                 .statusCode(404);
+
+        given()
+                .contentType("application/json")
+                .when()
+                .delete("/news/" + newsId)
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType("application/json")
+                .when()
+                .delete("/authors/" + authorId)
+                .then()
+                .statusCode(204);
     }
 
 
