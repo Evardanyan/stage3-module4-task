@@ -24,7 +24,7 @@ public class CommentModel implements BaseEntity<Long> {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "news_id", nullable = true)
+    @JoinColumn(name = "news_id", nullable = false)
     private NewsModel news;
 
 

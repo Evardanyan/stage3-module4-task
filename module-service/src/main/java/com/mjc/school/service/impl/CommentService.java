@@ -76,10 +76,12 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
     @Override
     public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
 //        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
-        NewsModel news = null;
-        if (dtoRequest.newsId() != null) {
-            news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
-        }
+//        NewsModel news = null;
+//        if (dtoRequest.newsId() != null) {
+//            news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
+//        }
+
+        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.newsId())));
 
         CommentModel model = mapper.dtoToModel(dtoRequest);
         model.setNews(news);

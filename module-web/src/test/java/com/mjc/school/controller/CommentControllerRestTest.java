@@ -24,19 +24,47 @@ public class CommentControllerRestTest {
 
     private Long commentId;
 
+    private Long newsId;
+
 
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 8080;
         RestAssured.basePath = "/api/v1";
-        commentService = mock(CommentService.class);
-//        commentRepository = mock(CommentRepository.class);
+
+        Map<String,Object> author = new HashMap<>();
+        author.put("name", "No One");
+
+        int aId = given()
+                .contentType("application/json")
+                .body(author)
+                .when().post("/authors")
+                .then()
+                .statusCode(201)
+                .extract().path("id"); // Assumes that the response contains the ID field
+
+        Long authorId = Long.valueOf(aId);
+
+        Map<String, Object> news = new HashMap<>();
+        news.put("title", "No One");
+        news.put("content", "No One");
+        news.put("authorId", authorId);
+
+        int nId = given()
+                .contentType("application/json")
+                .body(news)
+                .when().post("/news")
+                .then()
+                .statusCode(201)
+                .extract().path("id"); // Assumes that the response contains the ID field
+
+        newsId = Long.valueOf(nId);
+
 
         Map<String, Object> comment = new HashMap<>();
-        comment.put("content", "xyx1111");
-        comment.put("newsId", "90");
-
+        comment.put("content", "No One");
+        comment.put("newsId", newsId);
 
         int id = given()
                 .contentType("application/json")
@@ -48,7 +76,7 @@ public class CommentControllerRestTest {
 
         commentId = Long.valueOf(id);
 
-        System.out.println("Created comment ID: " + commentId);
+        System.out.println("Created comment ID: " + id);
 
 
     }
@@ -61,14 +89,14 @@ public class CommentControllerRestTest {
 
     @Test
     public void testGetCommentsById() {
-        given().get("/comments/3").then().assertThat().statusCode(200);
+        given().get("/comments/" + commentId).then().assertThat().statusCode(200);
     }
 
     @Test
     public void testCreateComment() {
-        Map<String, String> comment = new HashMap<>();
-        comment.put("content", "xyx1111");
-        comment.put("newsId", "90");
+        Map<String, Object> comment = new HashMap<>();
+        comment.put("content", "No One");
+        comment.put("newsId", newsId);
 
         given()
                 .contentType("application/json")
@@ -84,8 +112,6 @@ public class CommentControllerRestTest {
         comment.put("content", "xyx1111");
         comment.put("newsId", "90");
 
-        // Extract the ID from the API response
-//       int commentId = given()
        int id = given()
                 .contentType("application/json")
                 .body(comment)
@@ -104,10 +130,11 @@ public class CommentControllerRestTest {
     @Test
     public void testUpdateComment() {
         System.out.println(commentId);
+        System.out.println(newsId);;
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("id", commentId);
-        requestBody.put("content", "updated content");
-        requestBody.put("newsId", null);
+        requestBody.put("content", "No One updated");
+        requestBody.put("newsId", newsId);
 
         given()
                 .contentType("application/json")

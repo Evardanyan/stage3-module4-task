@@ -13,12 +13,12 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CommentModelMapper {
-    public List<CommentDtoResponse> modelListToDtoList(List<CommentModel> var1);
+    List<CommentDtoResponse> modelListToDtoList(List<CommentModel> var1);
 
-    @Mapping(target = "news", source = "news", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-    public CommentDtoResponse modelToDto(CommentModel var1);
+    @Mapping(target = "news", source = "news")
+    CommentDtoResponse modelToDto(CommentModel var1);
 
     @Mapping(target = "news.id", source = "newsId")
-    public CommentModel dtoToModel(CommentDtoRequest var1);
+    CommentModel dtoToModel(CommentDtoRequest var1);
 
 }
