@@ -16,11 +16,10 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
-public class WebExceptionHandler {
+public class RestControllerExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
@@ -36,8 +35,6 @@ public class WebExceptionHandler {
     public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         String errorMessage = String.format("Invalid value for parameter '%s': '%s'. Must be of type '%s'.", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName());
         return ResponseEntity.badRequest().body(errorMessage);
-
-//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 //    @ExceptionHandler(NotFoundException.class)
@@ -63,28 +60,10 @@ public class WebExceptionHandler {
                 exception.getClass().getSimpleName(),
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(exceptionDetails);
+        return ResponseEntity.status(NOT_FOUND).body(exceptionDetails);
     }
 
-
-//    @ExceptionHandler(value = { MyCustomException.class })
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public void handleMyCustomException(MyCustomException ex) {
-//        // Handle MyCustomException
-//    }
-
-//    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-//    public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-//        String errorMessage = null;
-//        if (ex.getParameter().getParameterType().equals(Long.class)) {
-//            errorMessage = String.format(ServiceErrorCodeMessage.VALIDATE_INT_VALUE.getCodeMsg(), ex.getName());
-//        } else {
-//            errorMessage = "Invalid argument type";
-//        }
-//        return ResponseEntity.badRequest().body(errorMessage);
-//    }
     @ExceptionHandler(value = { Exception.class })
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ExceptionDetails> handleException(Exception ex) {
         ExceptionDetails exceptionDetails = new ExceptionDetails(
                 ex.getMessage(),
@@ -94,10 +73,5 @@ public class WebExceptionHandler {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(exceptionDetails);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<String> handleAllExceptions(Exception e) {
-//        System.out.println("Exception class: " + e.getClass().getName());
-//        System.out.println("Exception message: " + e.getMessage());
-//        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+
 }

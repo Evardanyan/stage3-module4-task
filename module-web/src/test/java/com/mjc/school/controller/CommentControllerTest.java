@@ -1,12 +1,10 @@
 package com.mjc.school.controller;
 
 
-import com.mjc.school.repository.impl.CommentRepository;
 import com.mjc.school.service.impl.CommentService;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +12,9 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
 
-public class CommentControllerRestTest {
+public class CommentControllerTest {
     private CommentService commentService;
-
-    @Mock
-    private CommentRepository commentRepository;
 
     private Long commentId;
 
@@ -33,46 +27,46 @@ public class CommentControllerRestTest {
         RestAssured.port = 8080;
         RestAssured.basePath = "/api/v1";
 
-        Map<String,Object> author = new HashMap<>();
-        author.put("name", "No One");
+        Map<String, Object> authorBody = new HashMap<>();
+        authorBody.put("name", "No One");
 
         int aId = given()
                 .contentType("application/json")
-                .body(author)
+                .body(authorBody)
                 .when().post("/authors")
                 .then()
                 .statusCode(201)
-                .extract().path("id"); // Assumes that the response contains the ID field
+                .extract().path("id");
 
         Long authorId = Long.valueOf(aId);
 
-        Map<String, Object> news = new HashMap<>();
-        news.put("title", "No One");
-        news.put("content", "No One");
-        news.put("authorId", authorId);
+        Map<String, Object> newsBody = new HashMap<>();
+        newsBody.put("title", "No One");
+        newsBody.put("content", "No One");
+        newsBody.put("authorId", authorId);
 
         int nId = given()
                 .contentType("application/json")
-                .body(news)
+                .body(newsBody)
                 .when().post("/news")
                 .then()
                 .statusCode(201)
-                .extract().path("id"); // Assumes that the response contains the ID field
+                .extract().path("id");
 
         newsId = Long.valueOf(nId);
 
 
-        Map<String, Object> comment = new HashMap<>();
-        comment.put("content", "No One");
-        comment.put("newsId", newsId);
+        Map<String, Object> commentBody = new HashMap<>();
+        commentBody.put("content", "No One");
+        commentBody.put("newsId", newsId);
 
         int id = given()
                 .contentType("application/json")
-                .body(comment)
+                .body(commentBody)
                 .when().post("/comments")
                 .then()
                 .statusCode(201)
-                .extract().path("id"); // Assumes that the response contains the ID field
+                .extract().path("id");
 
         commentId = Long.valueOf(id);
 
@@ -94,51 +88,29 @@ public class CommentControllerRestTest {
 
     @Test
     public void testCreateComment() {
-        Map<String, Object> comment = new HashMap<>();
-        comment.put("content", "No One");
-        comment.put("newsId", newsId);
+        Map<String, Object> commentBody = new HashMap<>();
+        commentBody.put("content", "No One");
+        commentBody.put("newsId", newsId);
 
         given()
                 .contentType("application/json")
-                .body(comment)
+                .body(commentBody)
                 .when().post("/comments").then()
                 .statusCode(201);
 
     }
 
-    @Test
-    public void testCreateTComment() {
-        Map<String, String> comment = new HashMap<>();
-        comment.put("content", "xyx1111");
-        comment.put("newsId", "90");
-
-       int id = given()
-                .contentType("application/json")
-                .body(comment)
-                .when().post("/comments")
-                .then()
-                .statusCode(201)
-                .extract().path("id"); // Assumes that the response contains the ID field
-
-        commentId = Long.valueOf(id);
-        System.out.println(id);
-
-        System.out.println("Created comment ID: " + commentId);
-    }
-
 
     @Test
     public void testUpdateComment() {
-        System.out.println(commentId);
-        System.out.println(newsId);;
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("id", commentId);
-        requestBody.put("content", "No One updated");
-        requestBody.put("newsId", newsId);
+        Map<String, Object> commentBody = new HashMap<>();
+        commentBody.put("id", commentId);
+        commentBody.put("content", "No One updated");
+        commentBody.put("newsId", newsId);
 
         given()
                 .contentType("application/json")
-                .body(requestBody)
+                .body(commentBody)
                 .when()
                 .put("/comments")
                 .then()
@@ -147,23 +119,21 @@ public class CommentControllerRestTest {
 
     @Test
     public void testDeleteComment() {
-        // Assuming you have the commentId you want to delete
-        Long commentIdToDelete = commentId; // Replace this with the actual commentId you want to delete
+        Long commentIdToDelete = commentId;
 
         given()
                 .contentType("application/json")
                 .when()
                 .delete("/comments/" + commentIdToDelete)
                 .then()
-                .statusCode(204); // No Content
+                .statusCode(204);
 
-        // Now, try to get the deleted comment to check if it has been deleted
         given()
                 .contentType("application/json")
                 .when()
                 .get("/comments/" + commentIdToDelete)
                 .then()
-                .statusCode(404); // Not Found it trhow another error and  show 422
+                .statusCode(404);
     }
 
 

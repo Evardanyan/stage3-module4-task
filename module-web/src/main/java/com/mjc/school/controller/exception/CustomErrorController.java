@@ -11,7 +11,7 @@ public class CustomErrorController implements ErrorController {
 
     @RequestMapping("/error")
     public ResponseEntity<String> handleError() {
-        return new ResponseEntity<>("An error occurred. Please contact the support team.", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("An error occurred. Think before acting.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

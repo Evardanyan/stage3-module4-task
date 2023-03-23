@@ -20,10 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-//@Transactional
 public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> {
 
-    //    private final JpaRepository<AuthorModel, Long> authorRepository;
     private final AuthorRepository authorRepository;
     private final NewsRepository newsRepository;
     private final AuthorModelMapper mapper;
@@ -35,11 +33,6 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
         this.mapper = mapper;
     }
 
-//    @Override
-//    public List<AuthorDtoResponse> readAll() {
-//        List<AuthorModel> authorModels = this.authorRepository.findAll();
-//        return this.mapper.modelListToDtoList(authorModels);
-//    }
 
     @Override
     public Page<AuthorDtoResponse> readAll(Pageable pageable) {
@@ -60,7 +53,6 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), newsId)));
         AuthorModel authorModel = newsModel.getAuthorModel();
         return mapper.modelToDto(authorModel);
-//        return mapper.modelAuthorNameToDto(authorModel);
     }
 
 

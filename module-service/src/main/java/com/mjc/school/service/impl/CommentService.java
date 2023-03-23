@@ -22,14 +22,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-//@Transactional
 public class CommentService implements BaseService<CommentDtoRequest, CommentDtoResponse, Long> {
-//    private final JpaRepository<TagModel, Long> baseRepository;
     private final CommentRepository commentRepository;
 
-//    @Autowired
-//    private JpaRepository<NewsModel, Long> newsRepository;
-//    @Autowired
     private NewsRepository newsRepository;
 
     private CommentModelMapper mapper;
@@ -63,25 +58,10 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
         return mapper.modelToDto(commentModel);
     }
 
-//    @Override
-//    public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
-//        CommentModel model = mapper.dtoToModel(dtoRequest);
-//        NewsModel newsModel = newsRepository.findById(dtoRequest.id())
-//                .orElse(null);
-//        model.setNews(newsModel);
-//        CommentModel commentModel = commentRepository.save(model);
-//        return mapper.modelToDto(commentModel);
-//    }
-
     @Override
     public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
-//        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
-//        NewsModel news = null;
-//        if (dtoRequest.newsId() != null) {
-//            news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
-//        }
-
-        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.newsId())));
+        NewsModel news = newsRepository.findById(dtoRequest.newsId())
+                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.NEWS_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.newsId())));
 
         CommentModel model = mapper.dtoToModel(dtoRequest);
         model.setNews(news);
@@ -90,15 +70,13 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
         return mapper.modelToDto(savedModel);
     }
 
-
-
     @Override
     public CommentDtoResponse update(CommentDtoRequest dtoRequest) {
-        CommentModel commentModel = commentRepository.findById(dtoRequest.id())
+        commentRepository.findById(dtoRequest.id())
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.COMMENT_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())));
-        commentModel = mapper.dtoToModel(dtoRequest);
-        commentModel = commentRepository.save(commentModel);
-        return mapper.modelToDto(commentModel);
+        CommentModel updatedCommentModel = mapper.dtoToModel(dtoRequest);
+        CommentModel savedCommentModel = commentRepository.save(updatedCommentModel);
+        return mapper.modelToDto(savedCommentModel);
     }
 
     @Override

@@ -91,7 +91,6 @@ class CommentServiceTest {
         assertEquals(commentDtoResponse, result);
     }
 
-    //
     @DisplayName("JUnit test for readAll method")
     @Test
     void testReadAll() {

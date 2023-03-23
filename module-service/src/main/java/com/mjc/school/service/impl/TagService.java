@@ -1,5 +1,6 @@
 package com.mjc.school.service.impl;
 
+import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.impl.TagRepository;
 import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.repository.model.impl.TagModel;
@@ -18,19 +19,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-//@Transactional
 public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Long> {
-//    private final JpaRepository<TagModel, Long> baseRepository;
     private final TagRepository tagRepository;
 
-    @Autowired
     private JpaRepository<NewsModel, Long> newsRepository;
 
     private TagModelMapper mapper;
 
     @Autowired
-    public TagService(TagRepository tagRepository, TagModelMapper mapper) {
+    public TagService(TagRepository tagRepository, NewsRepository newsRepository, TagModelMapper mapper) {
         this.tagRepository = tagRepository;
+        this.newsRepository = newsRepository;
         this.mapper = mapper;
     }
 
@@ -41,11 +40,6 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
         List<TagModel> tagModels = newsModel.getTagModels();
         return mapper.modelListToDtoList(tagModels);
     }
-
-//    @Override
-//    public List<TagDtoResponse> readAll() {
-//        return mapper.modelListToDtoList(this.tagrepository.findAll());
-//    }
 
 
     @Override
@@ -64,23 +58,27 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
     @Override
     public TagDtoResponse create(TagDtoRequest dtoRequest) {
         TagModel model = mapper.dtoToModel(dtoRequest);
-        TagModel tagModel = tagRepository.save(model);
-        return this.mapper.modelToDto(tagModel);
+        TagModel savedTagModel = tagRepository.save(model);
+        return this.mapper.modelToDto(savedTagModel);
     }
 
     @Override
     public TagDtoResponse update(TagDtoRequest dtoRequest) {
-        TagModel tagModel = tagRepository.findById(dtoRequest.id())
+        TagModel existingTagModel = tagRepository.findById(dtoRequest.id())
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), dtoRequest.id())));
-        tagModel = mapper.dtoToModel(dtoRequest);
-        tagModel = tagRepository.save(tagModel);
-        return mapper.modelToDto(tagModel);
+
+        TagModel updatedTagModel = mapper.dtoToModel(dtoRequest);
+        updatedTagModel.setId(existingTagModel.getId());
+
+        TagModel savedTagModel = tagRepository.save(updatedTagModel);
+        return mapper.modelToDto(savedTagModel);
     }
+
 
     @Override
     public boolean deleteById(Long id) {
         tagRepository.findById(id)
-                .orElseThrow(() ->  new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
+                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
         tagRepository.deleteById(id);
         return true;
     }
