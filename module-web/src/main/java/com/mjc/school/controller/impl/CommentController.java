@@ -56,7 +56,13 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
-    @Override
+//    @Override
+//    @PostMapping
+//    public ResponseEntity<CommentDtoResponse> create(@Valid @RequestBody CommentDtoRequest createRequest) {
+//        CommentDtoResponse commentDtoResponse = service.create(createRequest);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(commentDtoResponse);
+//    }
+
     @PostMapping
     public ResponseEntity<CommentDtoResponse> create(@Valid @RequestBody CommentDtoRequest createRequest) {
         CommentDtoResponse commentDtoResponse = service.create(createRequest);
@@ -71,15 +77,15 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
     }
 
     @Override
-    @DeleteMapping
-    public ResponseEntity<Void> deleteById(@Valid @PathVariable Long id) {
+    @DeleteMapping(value = "/{id:\\d+}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     @GetMapping("/news/{id}/comments")
-    public ResponseEntity<List<CommentDtoResponse>> readCommentsByNewsId(@Valid @PathVariable Long id) {
+    public ResponseEntity<List<CommentDtoResponse>> readCommentsByNewsId(@PathVariable Long id) {
         List<CommentDtoResponse> commentsByNewsId = service.readCommentsByNewsId(id);
         return ResponseEntity.ok(commentsByNewsId);
     }

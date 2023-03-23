@@ -1,5 +1,6 @@
 package com.mjc.school.repository.model.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mjc.school.repository.model.BaseEntity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,9 +22,12 @@ public class CommentModel implements BaseEntity<Long> {
     @Column(nullable = false)
     private String content;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "news_id", nullable = false)
+    @JoinColumn(name = "news_id", nullable = true)
     private NewsModel news;
+
+
 
     public CommentModel() {
     }

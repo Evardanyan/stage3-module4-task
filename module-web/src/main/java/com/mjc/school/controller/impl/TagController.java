@@ -69,7 +69,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
     }
 
     @Override
-    @DeleteMapping
+    @DeleteMapping(value = "/{id:\\d+}")
     public ResponseEntity<Void> deleteById(@Valid @PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();

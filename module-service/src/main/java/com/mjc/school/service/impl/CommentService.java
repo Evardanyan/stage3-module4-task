@@ -75,7 +75,11 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
 
     @Override
     public CommentDtoResponse create(CommentDtoRequest dtoRequest) {
-        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
+//        NewsModel news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
+        NewsModel news = null;
+        if (dtoRequest.newsId() != null) {
+            news = newsRepository.findById(dtoRequest.newsId()).orElse(null);
+        }
 
         CommentModel model = mapper.dtoToModel(dtoRequest);
         model.setNews(news);

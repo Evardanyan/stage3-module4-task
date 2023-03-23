@@ -7,6 +7,7 @@ import com.mjc.school.service.dto.CommentDtoResponse;
 import com.mjc.school.service.dto.TagDtoRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValueCheckStrategy;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public interface CommentModelMapper {
     public List<CommentDtoResponse> modelListToDtoList(List<CommentModel> var1);
 
-    @Mapping(target = "news", source = "news")
+    @Mapping(target = "news", source = "news", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     public CommentDtoResponse modelToDto(CommentModel var1);
 
     @Mapping(target = "news.id", source = "newsId")
