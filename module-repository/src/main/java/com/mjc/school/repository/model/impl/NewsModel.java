@@ -45,7 +45,7 @@ public class NewsModel implements BaseEntity<Long> {
     )
     private List<TagModel> tagModels;
 
-    @OneToMany(mappedBy = "news")
+    @OneToMany(mappedBy = "news", cascade = CascadeType.REMOVE)
     private List<CommentModel> comments;
 
 

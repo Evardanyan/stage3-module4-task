@@ -19,7 +19,7 @@ public class TagModel implements BaseEntity<Long> {
 
 //    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tagModels")
     @JsonIgnore
-    @ManyToMany(mappedBy = "tagModels", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tagModels")
     private List<NewsModel> newsModel;
 
 

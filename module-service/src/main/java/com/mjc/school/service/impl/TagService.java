@@ -77,8 +77,12 @@ public class TagService implements BaseService<TagDtoRequest, TagDtoResponse, Lo
 
     @Override
     public boolean deleteById(Long id) {
-        tagRepository.findById(id)
+        TagModel tagModel = tagRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.TAG_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
+        for (NewsModel newsModel : tagModel.getNewsModel()) {
+            newsModel.getTagModels().remove(tagModel);
+            newsRepository.save(newsModel);
+        }
         tagRepository.deleteById(id);
         return true;
     }

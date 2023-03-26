@@ -75,7 +75,7 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/news/{id}/tags")
+    @GetMapping("/news/{id}/tag")
     public ResponseEntity<List<TagDtoResponse>> readTagsByNewsId(@Valid @PathVariable Long id) {
         List<TagDtoResponse> tagsByNewsId = service.readTagsByNewsId(id);
         return ResponseEntity.ok(tagsByNewsId);
