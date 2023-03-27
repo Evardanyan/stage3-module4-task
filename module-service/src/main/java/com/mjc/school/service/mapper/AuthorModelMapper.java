@@ -12,19 +12,18 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AuthorModelMapper {
-    public List<AuthorDtoResponse> modelListToDtoList(List<AuthorModel> var1);
+    List<AuthorDtoResponse> modelListToDtoList(List<AuthorModel> var1);
 
-    public AuthorDtoResponse modelToDto(AuthorModel var1);
+    AuthorDtoResponse modelToDto(AuthorModel var1);
 
 
 
     @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true),
             @Mapping(target = "id", ignore = true), @Mapping(target = "name", source = "name")})
     @Named("modelAuthorNameToDto")
-    public AuthorDtoResponse modelAuthorNameToDto(AuthorModel var1);
+    AuthorDtoResponse modelAuthorNameToDto(AuthorModel var1);
 
-//    @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true)})
     @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true)})
-    public AuthorModel dtoToModel(AuthorDtoRequest var1);
+    AuthorModel dtoToModel(AuthorDtoRequest var1);
 
 }

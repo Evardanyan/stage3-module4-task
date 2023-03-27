@@ -95,25 +95,6 @@ class TagServiceTest {
     }
 
 
-//    @DisplayName("JUnit test for readAll method")
-//    @Test
-//    void testReadAll() {
-//        List<TagModel> tagModels = new ArrayList<>();
-//        tagModels.add(new TagModel(1L, "Tag name 1"));
-//        tagModels.add(new TagModel(2L, "Tag name 2"));
-//
-//        List<TagDtoResponse> tagDtoResponses = new ArrayList<>();
-//        tagDtoResponses.add(new TagDtoResponse(1L, "Tag name 1"));
-//        tagDtoResponses.add(new TagDtoResponse(2L, "Tag name 2"));
-//
-//        when(tagRepository.findAll()).thenReturn(tagModels);
-//        when(mapper.modelListToDtoList(tagModels)).thenReturn(tagDtoResponses);
-//
-//        List<TagDtoResponse> result = tagService.readAll();
-//
-//        assertEquals(tagDtoResponses, result);
-//    }
-
     @DisplayName("JUnit test for readAll method")
     @Test
     void testReadAll() {

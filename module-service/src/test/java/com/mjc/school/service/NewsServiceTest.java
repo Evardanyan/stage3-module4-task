@@ -147,21 +147,6 @@ class NewsServiceTest {
     }
 
 
-//    @DisplayName("JUnit test for readAll method")
-//    @Test
-//    void testReadAll() {
-//
-//        when(newsRepository.findAll()).thenReturn(newsModels);
-//        when(mapper.modelListToDtoList(newsModels)).thenReturn(expectedDtos);
-//
-//        List<NewsDtoResponse> actualDtos = newsService.readAll();
-//
-//        assertEquals(expectedDtos, actualDtos);
-//        verify(newsRepository).findAll();
-//        verify(mapper).modelListToDtoList(newsModels);
-//    }
-
-
     @Test
     @DisplayName("Should return a page of news DTOs when readAll is called with valid page request")
     void testReadAll() {

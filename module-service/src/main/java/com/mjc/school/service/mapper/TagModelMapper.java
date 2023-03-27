@@ -10,11 +10,11 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TagModelMapper {
-    public List<TagDtoResponse> modelListToDtoList(List<TagModel> var1);
+    List<TagDtoResponse> modelListToDtoList(List<TagModel> var1);
 
-    public TagDtoResponse modelToDto(TagModel var1);
+    TagDtoResponse modelToDto(TagModel var1);
 
     @Mapping(target = "newsModel", ignore = true)
-    public TagModel dtoToModel(TagDtoRequest var1);
+    TagModel dtoToModel(TagDtoRequest var1);
 
 }

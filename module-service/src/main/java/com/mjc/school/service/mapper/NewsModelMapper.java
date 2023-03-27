@@ -14,29 +14,19 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {AuthorModelMapper.class})
 public interface NewsModelMapper {
 
-    public List<NewsDtoResponse> modelListToDtoList(List<NewsModel> var1);
+    List<NewsDtoResponse> modelListToDtoList(List<NewsModel> var1);
 
 
     @Mapping(target = "authorId", source = "authorModel.id")
     @Mapping(target = "tagList", source = "tagModels")
-//    @Mapping(target = "comments", source = "commentId", qualifiedByName = "commentIdToCommentModel")
-    public NewsDtoResponse modelToDto(NewsModel var1);
-
-//    @Named("commentIdToCommentModel")
-//    default List<CommentModel> commentIdToCommentModel(Long commentId) {
-//        if (commentId == null) {
-//            return Collections.emptyList();
-//        } else {
-//            return Collections.singletonList(new CommentModel(commentId));
-//        }
-//    }
+    NewsDtoResponse modelToDto(NewsModel var1);
 
 
     @Mappings(value = {@Mapping(target = "createDate", ignore = true), @Mapping(target = "lastUpdatedDate", ignore = true),
             @Mapping(target="comments", ignore = true), @Mapping(target = "authorModel.id", source = "authorId")})
     @Mapping(target = "tagModels", source = "tagId", qualifiedByName = "tagIdToTagModel")
 
-    public NewsModel dtoToModel(NewsDtoRequest var1);
+    NewsModel dtoToModel(NewsDtoRequest var1);
 
 
     @Named("tagIdToTagModel")

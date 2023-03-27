@@ -4,19 +4,15 @@ import com.mjc.school.repository.impl.CommentRepository;
 import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.impl.CommentModel;
 import com.mjc.school.repository.model.impl.NewsModel;
-import com.mjc.school.repository.model.impl.TagModel;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
-import com.mjc.school.service.dto.TagDtoRequest;
-import com.mjc.school.service.dto.TagDtoResponse;
 import com.mjc.school.service.exception.NotFoundException;
 import com.mjc.school.service.exception.ServiceErrorCodeMessage;
 import com.mjc.school.service.mapper.CommentModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -82,7 +78,7 @@ public class CommentService implements BaseService<CommentDtoRequest, CommentDto
     @Override
     public boolean deleteById(Long id) {
         commentRepository.findById(id)
-                .orElseThrow(() ->  new NotFoundException(String.format(ServiceErrorCodeMessage.COMMENT_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
+                .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.COMMENT_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
         commentRepository.deleteById(id);
         return true;
     }
