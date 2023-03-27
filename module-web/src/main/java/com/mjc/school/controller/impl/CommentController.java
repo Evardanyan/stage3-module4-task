@@ -63,24 +63,33 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
 //        return ResponseEntity.status(HttpStatus.CREATED).body(commentDtoResponse);
 //    }
 
+    @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CommentDtoResponse> create(@Valid @RequestBody CommentDtoRequest createRequest) {
         CommentDtoResponse commentDtoResponse = service.create(createRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(commentDtoResponse);
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<CommentDtoResponse> update(@Valid @RequestBody CommentDtoRequest updateRequest) {
+    @PutMapping("/{id}")
+    public ResponseEntity<CommentDtoResponse> update(@PathVariable Long id, @Valid @RequestBody CommentDtoRequest updateRequest) {
         CommentDtoResponse commentDtoResponse = service.update(updateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(commentDtoResponse);
     }
 
+//    @Override
+//    @DeleteMapping(value = "/{id:\\d+}")
+//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+//        service.deleteById(id);
+//        return ResponseEntity.noContent().build();
+//    }
+
     @Override
-    @DeleteMapping(value = "/{id:\\d+}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
         service.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @Override

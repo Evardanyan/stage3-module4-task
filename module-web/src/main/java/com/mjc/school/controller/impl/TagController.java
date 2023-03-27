@@ -56,23 +56,32 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
 
     @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TagDtoResponse> create(@Valid @RequestBody TagDtoRequest createRequest) {
         TagDtoResponse tagDtoResponse = service.create(createRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(tagDtoResponse);
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<TagDtoResponse> update(@Valid @RequestBody TagDtoRequest updateRequest) {
+    @PutMapping("/{id}")
+    public ResponseEntity<TagDtoResponse> update(@PathVariable Long id, @Valid @RequestBody TagDtoRequest updateRequest) {
         TagDtoResponse tagDtoResponse = service.update(updateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(tagDtoResponse);
     }
 
+
+//    @Override
+//    @DeleteMapping(value = "/{id:\\d+}")
+//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+//        service.deleteById(id);
+//        return ResponseEntity.noContent().build();
+//    }
+
     @Override
-    @DeleteMapping(value = "/{id:\\d+}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
         service.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/news/{id}/tag")

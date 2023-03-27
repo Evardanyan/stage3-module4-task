@@ -55,23 +55,31 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
 
     @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<NewsDtoResponse> create(@Valid @RequestBody NewsDtoRequest createRequest) {
         NewsDtoResponse newsDtoResponse = service.create(createRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(newsDtoResponse);
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<NewsDtoResponse> update(@Valid @RequestBody NewsDtoRequest updateRequest) {
+    @PutMapping("/{id}")
+    public ResponseEntity<NewsDtoResponse> update(@PathVariable Long id, @Valid @RequestBody NewsDtoRequest updateRequest) {
         NewsDtoResponse newsDtoResponse = service.update(updateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(newsDtoResponse);
     }
 
+//    @Override
+//    @DeleteMapping(value = "/{id:\\d+}")
+//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+//        service.deleteById(id);
+//        return ResponseEntity.noContent().build();
+//    }
+
     @Override
-    @DeleteMapping(value = "/{id:\\d+}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
         service.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")

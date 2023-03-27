@@ -56,23 +56,40 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
 
     @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<AuthorDtoResponse> create(@Valid @RequestBody AuthorDtoRequest createRequest) {
         AuthorDtoResponse authorDtoResponse = service.create(createRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(authorDtoResponse);
     }
 
+//    @Override
+//    @PutMapping
+//    public ResponseEntity<AuthorDtoResponse> update(@Valid @RequestBody AuthorDtoRequest updateRequest) {
+//        AuthorDtoResponse authorDtoResponse = service.update(updateRequest);
+//        return ResponseEntity.status(HttpStatus.OK).body(authorDtoResponse);
+//    }
+
     @Override
-    @PutMapping
-    public ResponseEntity<AuthorDtoResponse> update(@Valid @RequestBody AuthorDtoRequest updateRequest) {
+    @PutMapping("/{id}")
+    public ResponseEntity<AuthorDtoResponse> update(@PathVariable Long id, @Valid @RequestBody AuthorDtoRequest updateRequest) {
+
+//        updateRequest.id(id);
         AuthorDtoResponse authorDtoResponse = service.update(updateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(authorDtoResponse);
     }
 
+//    @Override
+//    @DeleteMapping(value = "/{id:\\d+}")
+//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+//        service.deleteById(id);
+//        return ResponseEntity.noContent().build();
+//    }
+
     @Override
-    @DeleteMapping(value = "/{id:\\d+}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
         service.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/news/{id}/author")

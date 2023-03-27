@@ -6,6 +6,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
@@ -53,9 +54,10 @@ public interface BaseController<T, R, K> {
 
     ResponseEntity<R> create(@Valid T createRequest);
 
-    ResponseEntity<R> update(@Valid T updateRequest);
+    ResponseEntity<R> update(@PathVariable Long id, @Valid T updateRequest);
 
-    ResponseEntity<Void> deleteById(@Valid K id);
+//    ResponseEntity<Void> deleteById(@Valid K id);
+    void deleteById(@Valid K id);
 
 }
 
