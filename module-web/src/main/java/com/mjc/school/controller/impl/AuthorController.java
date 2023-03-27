@@ -72,9 +72,8 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDtoResponse> update(@PathVariable Long id, @Valid @RequestBody AuthorDtoRequest updateRequest) {
-
-//        updateRequest.id(id);
-        AuthorDtoResponse authorDtoResponse = service.update(updateRequest);
+        AuthorDtoRequest updatedRequest = new AuthorDtoRequest(id, updateRequest.name());
+        AuthorDtoResponse authorDtoResponse = service.update(updatedRequest);
         return ResponseEntity.status(HttpStatus.OK).body(authorDtoResponse);
     }
 

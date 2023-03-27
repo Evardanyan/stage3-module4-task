@@ -18,5 +18,9 @@ public record AuthorDtoRequest(
         this(null, name);
     }
 
+    public AuthorDtoRequest(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
 

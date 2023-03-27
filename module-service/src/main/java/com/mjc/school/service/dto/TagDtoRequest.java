@@ -16,5 +16,10 @@ public record TagDtoRequest(
     public TagDtoRequest(String name) {
         this(null, name);
     }
+
+    public TagDtoRequest(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
 

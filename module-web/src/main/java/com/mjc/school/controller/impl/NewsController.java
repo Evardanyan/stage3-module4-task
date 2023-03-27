@@ -2,6 +2,7 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
+import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.NewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
 import org.springframework.data.domain.Page;
@@ -64,7 +65,8 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<NewsDtoResponse> update(@PathVariable Long id, @Valid @RequestBody NewsDtoRequest updateRequest) {
-        NewsDtoResponse newsDtoResponse = service.update(updateRequest);
+        NewsDtoRequest updatedRequest = new NewsDtoRequest(id, updateRequest.title(), updateRequest.content(), updateRequest.authorId(), updateRequest.tagId());
+        NewsDtoResponse newsDtoResponse = service.update(updatedRequest);
         return ResponseEntity.status(HttpStatus.OK).body(newsDtoResponse);
     }
 

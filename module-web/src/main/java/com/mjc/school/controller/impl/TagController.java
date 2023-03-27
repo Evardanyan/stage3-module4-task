@@ -2,6 +2,7 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
+import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
 import org.springframework.data.domain.Page;
@@ -65,7 +66,8 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<TagDtoResponse> update(@PathVariable Long id, @Valid @RequestBody TagDtoRequest updateRequest) {
-        TagDtoResponse tagDtoResponse = service.update(updateRequest);
+       TagDtoRequest updatedRequest = new TagDtoRequest(id, updateRequest.name());
+        TagDtoResponse tagDtoResponse = service.update(updatedRequest);
         return ResponseEntity.status(HttpStatus.OK).body(tagDtoResponse);
     }
 

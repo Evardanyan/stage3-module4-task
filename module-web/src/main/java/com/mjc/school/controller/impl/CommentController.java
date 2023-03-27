@@ -2,10 +2,7 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
-import com.mjc.school.service.dto.CommentDtoRequest;
-import com.mjc.school.service.dto.CommentDtoResponse;
-import com.mjc.school.service.dto.TagDtoRequest;
-import com.mjc.school.service.dto.TagDtoResponse;
+import com.mjc.school.service.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -74,7 +71,8 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<CommentDtoResponse> update(@PathVariable Long id, @Valid @RequestBody CommentDtoRequest updateRequest) {
-        CommentDtoResponse commentDtoResponse = service.update(updateRequest);
+        CommentDtoRequest updatedRequest = new CommentDtoRequest(id, updateRequest.content());
+        CommentDtoResponse commentDtoResponse = service.update(updatedRequest);
         return ResponseEntity.status(HttpStatus.OK).body(commentDtoResponse);
     }
 
