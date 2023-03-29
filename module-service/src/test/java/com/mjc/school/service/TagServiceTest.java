@@ -1,8 +1,10 @@
 package com.mjc.school.service;
 
 
+import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.impl.TagRepository;
 import com.mjc.school.repository.model.impl.AuthorModel;
+import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.repository.model.impl.TagModel;
 import com.mjc.school.service.dto.AuthorDtoResponse;
 import com.mjc.school.service.dto.TagDtoRequest;
@@ -21,7 +23,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,11 +41,16 @@ class TagServiceTest {
     @Mock
     private TagRepository tagRepository;
 
+
+    @Mock
+    private NewsRepository newsRepository;
     @InjectMocks
     private TagService tagService;
 
     private AuthorModel authorModel;
     private AuthorDtoResponse authorDtoResponse;
+
+    Date now = new Date();
 
 
     @DisplayName("JUnit test for create method")
@@ -148,12 +157,38 @@ class TagServiceTest {
     void testDeleteById() {
         Long id = 1L;
 
+        TagModel exampleOne = new TagModel(2L, "test1234");
+        TagModel exampleTwo = new TagModel(3L, "test1234");
+        TagModel exampleThree = new TagModel(4L, "test1234");
+
+        List<TagModel> tagList = new ArrayList<>();
+        tagList.add(exampleOne);
+        tagList.add(exampleTwo);
+        tagList.add(exampleThree);
+
+        authorModel = new AuthorModel(1L, "TestTest");
+
+        List<NewsModel> newsList = new ArrayList<>();
+        NewsModel newsModel = new NewsModel();
+        newsModel.setId(1L);
+        newsModel.setTitle("Fake News Title");
+        newsModel.setContent("Fake News Content");
+        newsModel.setCreateDate(now);
+        newsModel.setLastUpdatedDate(now);
+        newsModel.setAuthorModel(authorModel);
+        newsModel.setTagModels(tagList);
+        newsList.add(newsModel);
+
+
         TagModel tagModel = new TagModel();
-        tagModel.setId(id);
+        tagModel.setId(1L);
         tagModel.setName("Tag Name");
+        tagModel.setNewsModel(newsList);
 
         when(tagRepository.findById(id)).thenReturn(Optional.of(tagModel));
+        when(newsRepository.save(any())).thenReturn(newsModel);
         doNothing().when(tagRepository).deleteById(id);
+
 
         boolean deleted = tagService.deleteById(id);
 
@@ -161,6 +196,12 @@ class TagServiceTest {
         verify(tagRepository, times(1)).findById(id);
         verify(tagRepository, times(1)).deleteById(id);
     }
+
+
+
+
+
+
 
     @DisplayName("JUnit test for deleteByIdNonExisting")
     @Test

@@ -4,6 +4,7 @@ import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
+import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 //@RequestMapping(value = "/api/v1/authors", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
 @RequestMapping(value = "/api/v1/authors")
 @Validated
+@Api(tags = "Author Management", description = "Operations related to authors")
 public class AuthorController implements BaseController<AuthorDtoRequest, AuthorDtoResponse, Long> {
 
 
@@ -27,20 +29,74 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
         this.service = service;
     }
 
-    @Override
+//    @Override
+//    @GetMapping
+//    @ApiOperation(value = "Get a list of all authors", response = AuthorDtoResponse.class, responseContainer = "Page")
+//    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
+//            @RequestParam(value = "page", defaultValue = "0") int page,
+//            @RequestParam(value = "size", defaultValue = "10") int size,
+//            @RequestParam(value = "sort", defaultValue = "name") String sort,
+//            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+//
+//        Sort sortable = Sort.by(sort);
+//        if (direction.equalsIgnoreCase("desc")) {
+//            sortable = sortable.descending();
+//        }
+//
+//        PageRequest pageRequest = PageRequest.of(page, size, sortable);
+//
+//        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
+//
+//        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
+//    }
+
+
+//    @Override
+//    @GetMapping
+//    @ApiOperation(value = "Get a list of all authors", response = AuthorDtoResponse.class, responseContainer = "Page")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Successfully retrieved the list of authors"),
+//            @ApiResponse(code = 500, message = "Internal server error")
+//    })
+//    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
+//            @RequestParam(value = "page", defaultValue = "0")
+//            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
+//            @RequestParam(value = "size", defaultValue = "10")
+//            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
+//            @RequestParam(value = "sort", defaultValue = "name")
+//            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
+//            @RequestParam(value = "direction", defaultValue = "asc")
+//            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
+//
+//        Sort sortable = Sort.by(sort);
+//        if (direction.equalsIgnoreCase("desc")) {
+//            sortable = sortable.descending();
+//        }
+//
+//        PageRequest pageRequest = PageRequest.of(page, size, sortable);
+//
+//        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
+//
+//        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
+//    }
+
     @GetMapping
+    @ApiOperation(value = "Get a list of all authors", response = AuthorDtoResponse.class, responseContainer = "Page")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the list of authors"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "name") String sort,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+            @RequestParam(value = "page", defaultValue = "0")
+            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10")
+            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "name")
+            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc")
+            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
 
-        Sort sortable = Sort.by(sort);
-        if (direction.equalsIgnoreCase("desc")) {
-            sortable = sortable.descending();
-        }
-
-        PageRequest pageRequest = PageRequest.of(page, size, sortable);
+        PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
         Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
 
@@ -57,42 +113,63 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthorDtoResponse> create(@Valid @RequestBody AuthorDtoRequest createRequest) {
+    @ApiOperation(value = "Create a new author", response = AuthorDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully created a new author"),
+            @ApiResponse(code = 400, message = "Invalid author data"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    public ResponseEntity<AuthorDtoResponse> create (
+            @Valid @RequestBody
+            @ApiParam(value = "Author data", required = true) AuthorDtoRequest createRequest) {
         AuthorDtoResponse authorDtoResponse = service.create(createRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(authorDtoResponse);
     }
 
-//    @Override
-//    @PutMapping
-//    public ResponseEntity<AuthorDtoResponse> update(@Valid @RequestBody AuthorDtoRequest updateRequest) {
-//        AuthorDtoResponse authorDtoResponse = service.update(updateRequest);
-//        return ResponseEntity.status(HttpStatus.OK).body(authorDtoResponse);
-//    }
-
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<AuthorDtoResponse> update(@PathVariable Long id, @Valid @RequestBody AuthorDtoRequest updateRequest) {
+    @ApiOperation(value = "Update an existing author", response = AuthorDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated the author"),
+            @ApiResponse(code = 400, message = "Invalid author data"),
+            @ApiResponse(code = 404, message = "Author not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    public ResponseEntity<AuthorDtoResponse> update(
+            @PathVariable
+            @ApiParam(value = "Author ID", required = true) Long id,
+            @Valid @RequestBody
+            @ApiParam(value = "Updated author data", required = true) AuthorDtoRequest updateRequest) {
         AuthorDtoRequest updatedRequest = new AuthorDtoRequest(id, updateRequest.name());
         AuthorDtoResponse authorDtoResponse = service.update(updatedRequest);
         return ResponseEntity.status(HttpStatus.OK).body(authorDtoResponse);
     }
 
-//    @Override
-//    @DeleteMapping(value = "/{id:\\d+}")
-//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-//        service.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
-
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
+    @ApiOperation(value = "Delete an author by ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successfully deleted the author"),
+            @ApiResponse(code = 404, message = "Author not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    public void deleteById(
+            @PathVariable
+            @ApiParam(value = "Author ID", required = true) Long id) {
         service.deleteById(id);
     }
 
     @GetMapping("/news/{id}/author")
-    public ResponseEntity<AuthorDtoResponse> readAuthorByNewsId(@Valid @PathVariable Long id) {
+    @ApiOperation(value = "Get an author by news ID", response = AuthorDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the author"),
+            @ApiResponse(code = 404, message = "Author not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    public ResponseEntity<AuthorDtoResponse> readAuthorByNewsId(
+            @Valid @PathVariable
+            @ApiParam(value = "News ID", required = true) Long id) {
         return ResponseEntity.ok(service.readAuthorByNewsId(id));
     }
 }

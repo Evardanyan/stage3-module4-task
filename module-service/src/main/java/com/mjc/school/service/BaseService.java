@@ -1,7 +1,9 @@
 package com.mjc.school.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,14 @@ public interface BaseService<T, R, K> {
     R update(T updateRequest);
 
     boolean deleteById(K id);
+
+    default PageRequest buildPageRequest(int page, int size, String sort, String direction) {
+        Sort sortable = Sort.by(sort);
+        if (direction.equalsIgnoreCase("desc")) {
+            sortable = sortable.descending();
+        }
+        return PageRequest.of(page, size, sortable);
+    }
 
    default List<R> readTagsByNewsId(K id) {
        return Collections.emptyList();
