@@ -8,9 +8,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @SpringBootApplication
 @EntityScan(basePackages = "com.mjc.school.repository")
-public class NewsRESTApplication {
+public class Main {
     public static void main(String[] args) {
-        SpringApplication.run(NewsRESTApplication.class, args);
+        SpringApplication.run(Main.class, args);
     }
-
 }
