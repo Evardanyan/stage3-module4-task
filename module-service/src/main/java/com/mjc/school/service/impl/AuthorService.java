@@ -55,6 +55,8 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
     public AuthorDtoResponse create(AuthorDtoRequest dtoRequest) {
         AuthorModel model = mapper.dtoToModel(dtoRequest);
         AuthorModel authorModel = authorRepository.save(model);
+//        System.out.println(authorModel);
+//        System.out.println(mapper.modelToDto(authorModel));
         return mapper.modelToDto(authorModel);
     }
 

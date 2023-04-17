@@ -4,6 +4,7 @@ import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
+import com.mjc.school.service.dto.NewsDtoResponse;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,8 @@ import javax.validation.Valid;
 //@RequestMapping(value = "/api/v1/authors", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
 @RequestMapping(value = "/api/v1/authors")
 @Validated
-@Api(tags = "Author Management", description = "Operations related to authors")
+//@Api(tags = "Author Management", description = "Operations related to authors")
+@Api(tags = "Author Management", produces = "application/json", value = "Operations for creating, updating, retrieving and deleting news in the application")
 public class AuthorController implements BaseController<AuthorDtoRequest, AuthorDtoResponse, Long> {
 
 
@@ -106,6 +108,12 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
+    @ApiOperation(value = "Retrieve specific author with the supplied id", response = AuthorDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the author with the supplied id"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
@@ -123,6 +131,7 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @Valid @RequestBody
             @ApiParam(value = "Author data", required = true) AuthorDtoRequest createRequest) {
         AuthorDtoResponse authorDtoResponse = service.create(createRequest);
+//        System.out.println(authorDtoResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(authorDtoResponse);
     }
 

@@ -1,7 +1,5 @@
 package com.mjc.school.service.mapper;
 
-import com.mjc.school.repository.model.impl.AuthorModel;
-import com.mjc.school.repository.model.impl.CommentModel;
 import com.mjc.school.repository.model.impl.NewsModel;
 import com.mjc.school.repository.model.impl.TagModel;
 import com.mjc.school.service.dto.NewsDtoRequest;

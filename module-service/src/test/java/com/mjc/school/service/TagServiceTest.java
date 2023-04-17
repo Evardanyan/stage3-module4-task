@@ -23,9 +23,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +49,7 @@ class TagServiceTest {
     private AuthorModel authorModel;
     private AuthorDtoResponse authorDtoResponse;
 
-    Date now = new Date();
+    OffsetDateTime now = OffsetDateTime.now();
 
 
     @DisplayName("JUnit test for create method")

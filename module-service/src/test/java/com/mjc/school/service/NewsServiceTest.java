@@ -22,8 +22,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +60,7 @@ class NewsServiceTest {
 
     private List<NewsDtoResponse> expectedDtos;
 
-    Date now = new Date();
+    OffsetDateTime now = OffsetDateTime.now();
 
     @BeforeEach
     void setUp() {

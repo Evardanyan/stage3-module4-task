@@ -18,7 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/comments")
 @Validated
-@Api(tags = "Comment Management", description = "Operations related to comments")
+//@Api(tags = "Comment Management", description = "Operations related to comments")
+@Api(tags = "Comment Management", produces = "application/json", value = "Operations for creating, updating, retrieving and deleting news in the application")
 public class CommentController implements BaseController<CommentDtoRequest, CommentDtoResponse, Long> {
 
     private final BaseService<CommentDtoRequest, CommentDtoResponse, Long> service;
@@ -47,6 +48,12 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
 
     @Override
     @GetMapping(value = "/{id:\\d+}")
+    @ApiOperation(value = "Retrieve specific comment with the supplied id", response = CommentDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the comment with the supplied id"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public ResponseEntity<CommentDtoResponse> readById(@Valid @PathVariable Long id) {
 //        return ResponseEntity.ok(service.readById(id));
         return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
