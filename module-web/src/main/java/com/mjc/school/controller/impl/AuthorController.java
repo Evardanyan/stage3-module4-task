@@ -1,6 +1,7 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
+import com.mjc.school.controller.exception.InvalidParameterException;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
@@ -15,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 //@RequestMapping(value = "/api/v1/authors", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
@@ -88,21 +91,56 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @ApiResponse(code = 200, message = "Successfully retrieved the list of authors"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
+//    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
+//            @RequestParam(value = "page", defaultValue = "0")
+//            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
+//            @RequestParam(value = "size", defaultValue = "10")
+//            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
+//            @RequestParam(value = "sort", defaultValue = "name")
+//            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
+//            @RequestParam(value = "direction", defaultValue = "asc")
+//            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
+
     public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-            @RequestParam(value = "page", defaultValue = "0")
-            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10")
-            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "name")
-            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
-            @RequestParam(value = "direction", defaultValue = "asc")
-            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
+            @RequestParam Map<String, String> params) {
+
+        int page = parseIntOrDefault(params.get("page"), 0);
+        int size = parseIntOrDefault(params.get("size"), 10);
+        String sort = params.getOrDefault("sort", "name");
+        String direction = params.getOrDefault("direction", "asc");
+
+        validateRequestParameters(params);
+
+
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
         Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
 
         return new ResponseEntity<>(authorsPage, HttpStatus.OK);
+    }
+
+
+    private int parseIntOrDefault(String value, int defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new InvalidParameterException("Invalid integer value: " + value);
+        }
+    }
+
+    private void validateRequestParameters(Map<String, String> params) {
+        Set<String> validParameterNames = Set.of("page", "size", "sort", "direction");
+
+        for (String paramName : params.keySet()) {
+            if (!validParameterNames.contains(paramName)) {
+                throw new InvalidParameterException("Invalid parameter name: " + paramName);
+            }
+        }
     }
 
 

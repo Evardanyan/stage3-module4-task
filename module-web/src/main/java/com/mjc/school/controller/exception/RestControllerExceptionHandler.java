@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,15 +22,56 @@ import static org.springframework.http.HttpStatus.*;
 @RestControllerAdvice
 public class RestControllerExceptionHandler {
 
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
-        List<ObjectError> errors = bindingResult.getAllErrors();
-        String errorMessage = errors.stream()
+    public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult()
+                .getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.joining("; "));
-        return ResponseEntity.badRequest().body(errorMessage);
+                .collect(Collectors.joining(", "));
+
+        CustomErrorResponse errorResponse = new CustomErrorResponse();
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setMessage("Validation error: " + message);
+        errorResponse.setTimestamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<CustomErrorResponse> handleInvalidRequestMethod(HttpRequestMethodNotSupportedException ex) {
+        CustomErrorResponse errorResponse = new CustomErrorResponse();
+        errorResponse.setStatus(HttpStatus.METHOD_NOT_ALLOWED.value());
+        errorResponse.setMessage("Invalid HTTP method. Supported methods: " + ex.getSupportedHttpMethods());
+        errorResponse.setTimestamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<Object> handleInvalidParameterException(InvalidParameterException ex) {
+        // Create error response
+        CustomErrorResponse apiError = new CustomErrorResponse();
+        apiError.setStatus(BAD_REQUEST.value());
+        apiError.setMessage(ex.getMessage());
+        apiError.setTimestamp(System.currentTimeMillis());
+        return new ResponseEntity<>(apiError, BAD_REQUEST);
+    }
+
+
+
+
+
+
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+//        BindingResult bindingResult = ex.getBindingResult();
+//        List<ObjectError> errors = bindingResult.getAllErrors();
+//        String errorMessage = errors.stream()
+//                .map(ObjectError::getDefaultMessage)
+//                .collect(Collectors.joining("; "));
+//        return ResponseEntity.badRequest().body(errorMessage);
+//    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
