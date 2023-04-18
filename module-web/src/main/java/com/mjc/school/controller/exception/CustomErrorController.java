@@ -8,20 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import java.time.OffsetDateTime;
 
-//@RestController
-//public class CustomErrorController implements ErrorController {
-//
-//    @RequestMapping("/error")
-//    public ResponseEntity<String> handleError() {
-//        return new ResponseEntity<>("An error occurred. Think before acting.", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//
-//
-//    public String getErrorPath() {
-//        return "/error";
-//    }
-//}
 @RestController
 @RequestMapping("${server.error.path:${error.path:/error}}")
 public class CustomErrorController implements ErrorController {
@@ -30,7 +18,7 @@ public class CustomErrorController implements ErrorController {
     public ResponseEntity<CustomErrorResponse> handleError(HttpServletRequest request) {
         Integer statusCode = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        String message = "An error occurred. Think before acting.";
+        String message = "An error occurred.";
 
         if (statusCode != null) {
             httpStatus = HttpStatus.valueOf(statusCode);
@@ -47,7 +35,7 @@ public class CustomErrorController implements ErrorController {
         CustomErrorResponse errorResponse = new CustomErrorResponse();
         errorResponse.setStatus(httpStatus.value());
         errorResponse.setMessage(message);
-        errorResponse.setTimestamp(System.currentTimeMillis());
+        errorResponse.setTimestamp(OffsetDateTime.now());
 
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
@@ -55,6 +43,5 @@ public class CustomErrorController implements ErrorController {
     public String getErrorPath() {
         return "/error";
     }
-
 
 }

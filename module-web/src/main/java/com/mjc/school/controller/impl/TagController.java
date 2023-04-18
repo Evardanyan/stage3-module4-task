@@ -2,14 +2,11 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.BaseService;
-import com.mjc.school.service.dto.CommentDtoRequest;
-import com.mjc.school.service.dto.NewsDtoResponse;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -98,18 +95,11 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiParam(value = "News ID", readOnly = true) Long id,
             @Valid @RequestBody
             @ApiParam(value = "Updated news data", required = true) TagDtoRequest updateRequest) {
-       TagDtoRequest updatedRequest = new TagDtoRequest(id, updateRequest.name());
+        TagDtoRequest updatedRequest = new TagDtoRequest(id, updateRequest.name());
         TagDtoResponse tagDtoResponse = service.update(updatedRequest);
         return ResponseEntity.status(HttpStatus.OK).body(tagDtoResponse);
     }
 
-
-//    @Override
-//    @DeleteMapping(value = "/{id:\\d+}")
-//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-//        service.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
 
     @Override
     @DeleteMapping("/{id}")

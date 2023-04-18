@@ -35,12 +35,16 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
         return authorPage.map(authorModel -> mapper.modelToDto(authorModel));
     }
 
+
+
     @Override
     public AuthorDtoResponse readById(Long id) {
         AuthorModel authorModel = authorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(ServiceErrorCodeMessage.AUTHOR_ID_DOES_NOT_EXIST.getCodeMsg(), id)));
         return this.mapper.modelToDto(authorModel);
     }
+
+
 
     @Override
     public AuthorDtoResponse readAuthorByNewsId(Long newsId) {
@@ -55,8 +59,6 @@ public class AuthorService implements BaseService<AuthorDtoRequest, AuthorDtoRes
     public AuthorDtoResponse create(AuthorDtoRequest dtoRequest) {
         AuthorModel model = mapper.dtoToModel(dtoRequest);
         AuthorModel authorModel = authorRepository.save(model);
-//        System.out.println(authorModel);
-//        System.out.println(mapper.modelToDto(authorModel));
         return mapper.modelToDto(authorModel);
     }
 

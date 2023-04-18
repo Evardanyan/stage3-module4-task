@@ -1,32 +1,31 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.controller.exception.InvalidParameterException;
+import com.mjc.school.controller.util.AuthorModelAssembler;
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
-import com.mjc.school.service.dto.NewsDtoResponse;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
-import java.util.Set;
 
 @RestController
-//@RequestMapping(value = "/api/v1/authors", consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
 @RequestMapping(value = "/api/v1/authors")
 @Validated
-//@Api(tags = "Author Management", description = "Operations related to authors")
 @Api(tags = "Author Management", produces = "application/json", value = "Operations for creating, updating, retrieving and deleting news in the application")
 public class AuthorController implements BaseController<AuthorDtoRequest, AuthorDtoResponse, Long> {
 
+    @Autowired
+    private AuthorModelAssembler authorModelAssembler;
 
     private final BaseService<AuthorDtoRequest, AuthorDtoResponse, Long> service;
 
@@ -34,56 +33,6 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
         this.service = service;
     }
 
-//    @Override
-//    @GetMapping
-//    @ApiOperation(value = "Get a list of all authors", response = AuthorDtoResponse.class, responseContainer = "Page")
-//    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-//            @RequestParam(value = "page", defaultValue = "0") int page,
-//            @RequestParam(value = "size", defaultValue = "10") int size,
-//            @RequestParam(value = "sort", defaultValue = "name") String sort,
-//            @RequestParam(value = "direction", defaultValue = "asc") String direction) {
-//
-//        Sort sortable = Sort.by(sort);
-//        if (direction.equalsIgnoreCase("desc")) {
-//            sortable = sortable.descending();
-//        }
-//
-//        PageRequest pageRequest = PageRequest.of(page, size, sortable);
-//
-//        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
-//
-//        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
-//    }
-
-
-//    @Override
-//    @GetMapping
-//    @ApiOperation(value = "Get a list of all authors", response = AuthorDtoResponse.class, responseContainer = "Page")
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Successfully retrieved the list of authors"),
-//            @ApiResponse(code = 500, message = "Internal server error")
-//    })
-//    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-//            @RequestParam(value = "page", defaultValue = "0")
-//            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
-//            @RequestParam(value = "size", defaultValue = "10")
-//            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
-//            @RequestParam(value = "sort", defaultValue = "name")
-//            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
-//            @RequestParam(value = "direction", defaultValue = "asc")
-//            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
-//
-//        Sort sortable = Sort.by(sort);
-//        if (direction.equalsIgnoreCase("desc")) {
-//            sortable = sortable.descending();
-//        }
-//
-//        PageRequest pageRequest = PageRequest.of(page, size, sortable);
-//
-//        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
-//
-//        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
-//    }
 
     @GetMapping
     @ApiOperation(value = "Get a list of all authors", response = AuthorDtoResponse.class, responseContainer = "Page")
@@ -91,56 +40,29 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @ApiResponse(code = 200, message = "Successfully retrieved the list of authors"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-//    public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-//            @RequestParam(value = "page", defaultValue = "0")
-//            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
-//            @RequestParam(value = "size", defaultValue = "10")
-//            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
-//            @RequestParam(value = "sort", defaultValue = "name")
-//            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
-//            @RequestParam(value = "direction", defaultValue = "asc")
-//            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
-
     public ResponseEntity<Page<AuthorDtoResponse>> readAll(
-            @RequestParam Map<String, String> params) {
-
-        int page = parseIntOrDefault(params.get("page"), 0);
-        int size = parseIntOrDefault(params.get("size"), 10);
-        String sort = params.getOrDefault("sort", "name");
-        String direction = params.getOrDefault("direction", "asc");
-
-        validateRequestParameters(params);
-
-
+            @RequestParam(value = "page", defaultValue = "0")
+            @ApiParam(value = "Page number of the results", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10")
+            @ApiParam(value = "Number of results per page", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "name")
+            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
+            @RequestParam(value = "direction", defaultValue = "asc")
+            @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
+//
+//        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
+//
+//        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
 
         Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
 
+        authorsPage.getContent().forEach(authorDtoResponse -> {
+            authorModelAssembler.addLinks(authorDtoResponse);
+        });
+
         return new ResponseEntity<>(authorsPage, HttpStatus.OK);
-    }
-
-
-    private int parseIntOrDefault(String value, int defaultValue) {
-        if (value == null) {
-            return defaultValue;
-        }
-
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            throw new InvalidParameterException("Invalid integer value: " + value);
-        }
-    }
-
-    private void validateRequestParameters(Map<String, String> params) {
-        Set<String> validParameterNames = Set.of("page", "size", "sort", "direction");
-
-        for (String paramName : params.keySet()) {
-            if (!validParameterNames.contains(paramName)) {
-                throw new InvalidParameterException("Invalid parameter name: " + paramName);
-            }
-        }
     }
 
 
@@ -153,7 +75,8 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @ApiResponse(code = 500, message = "Application failed to process the request")
     })
     public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
-        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+        return new ResponseEntity<>(authorModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
+//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
     @Override
@@ -165,11 +88,10 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @ApiResponse(code = 400, message = "Invalid author data"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    public ResponseEntity<AuthorDtoResponse> create (
+    public ResponseEntity<AuthorDtoResponse> create(
             @Valid @RequestBody
             @ApiParam(value = "Author data", required = true) AuthorDtoRequest createRequest) {
         AuthorDtoResponse authorDtoResponse = service.create(createRequest);
-//        System.out.println(authorDtoResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(authorDtoResponse);
     }
 

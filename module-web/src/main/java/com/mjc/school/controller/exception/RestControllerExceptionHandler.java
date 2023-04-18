@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -21,7 +22,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class RestControllerExceptionHandler {
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -33,7 +33,7 @@ public class RestControllerExceptionHandler {
         CustomErrorResponse errorResponse = new CustomErrorResponse();
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setMessage("Validation error: " + message);
-        errorResponse.setTimestamp(System.currentTimeMillis());
+        errorResponse.setTimestamp(OffsetDateTime.now());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -43,7 +43,7 @@ public class RestControllerExceptionHandler {
         CustomErrorResponse errorResponse = new CustomErrorResponse();
         errorResponse.setStatus(HttpStatus.METHOD_NOT_ALLOWED.value());
         errorResponse.setMessage("Invalid HTTP method. Supported methods: " + ex.getSupportedHttpMethods());
-        errorResponse.setTimestamp(System.currentTimeMillis());
+        errorResponse.setTimestamp(OffsetDateTime.now());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
     }
@@ -54,24 +54,11 @@ public class RestControllerExceptionHandler {
         CustomErrorResponse apiError = new CustomErrorResponse();
         apiError.setStatus(BAD_REQUEST.value());
         apiError.setMessage(ex.getMessage());
-        apiError.setTimestamp(System.currentTimeMillis());
+        apiError.setTimestamp(OffsetDateTime.now());
         return new ResponseEntity<>(apiError, BAD_REQUEST);
     }
 
 
-
-
-
-
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
-//        BindingResult bindingResult = ex.getBindingResult();
-//        List<ObjectError> errors = bindingResult.getAllErrors();
-//        String errorMessage = errors.stream()
-//                .map(ObjectError::getDefaultMessage)
-//                .collect(Collectors.joining("; "));
-//        return ResponseEntity.badRequest().body(errorMessage);
-//    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
@@ -79,16 +66,6 @@ public class RestControllerExceptionHandler {
         return ResponseEntity.badRequest().body(errorMessage);
     }
 
-//    @ExceptionHandler(NotFoundException.class)
-//    public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-//    }
-
-//    @ExceptionHandler(NotFoundException.class)
-//    public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
-//        System.out.println("Handling NotFoundException: " + e.getMessage());
-//        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-//    }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException exception) {
@@ -96,21 +73,21 @@ public class RestControllerExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ExceptionDetails> handleEntityNotFoundException(NotFoundException exception) {
-        ExceptionDetails exceptionDetails = new ExceptionDetails(
+    public ResponseEntity<CustomErrorResponse> handleEntityNotFoundException(NotFoundException exception) {
+        CustomErrorResponse exceptionDetails = new CustomErrorResponse(
                 exception.getMessage(),
                 exception.getClass().getSimpleName(),
-                ZonedDateTime.now(ZoneId.of("Z"))
+                OffsetDateTime.now()
         );
         return ResponseEntity.status(NOT_FOUND).body(exceptionDetails);
     }
 
     @ExceptionHandler(value = { Exception.class })
-    public ResponseEntity<ExceptionDetails> handleException(Exception ex) {
-        ExceptionDetails exceptionDetails = new ExceptionDetails(
+    public ResponseEntity<CustomErrorResponse> handleException(Exception ex) {
+        CustomErrorResponse exceptionDetails = new CustomErrorResponse(
                 ex.getMessage(),
                 ex.getClass().getSimpleName(),
-                ZonedDateTime.now(ZoneId.of("Z"))
+                OffsetDateTime.now()
         );
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(exceptionDetails);
     }

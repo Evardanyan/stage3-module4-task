@@ -1,12 +1,17 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
+import com.mjc.school.controller.util.AuthorModelAssembler;
+import com.mjc.school.controller.util.CommentModelAssembler;
 import com.mjc.school.service.BaseService;
-import com.mjc.school.service.dto.*;
+import com.mjc.school.service.dto.AuthorDtoResponse;
+import com.mjc.school.service.dto.CommentDtoRequest;
+import com.mjc.school.service.dto.CommentDtoResponse;
+import com.mjc.school.service.dto.NewsDtoResponse;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,10 +23,11 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/comments")
 @Validated
-//@Api(tags = "Comment Management", description = "Operations related to comments")
 @Api(tags = "Comment Management", produces = "application/json", value = "Operations for creating, updating, retrieving and deleting news in the application")
 public class CommentController implements BaseController<CommentDtoRequest, CommentDtoResponse, Long> {
 
+    @Autowired
+    private CommentModelAssembler commentModelAssembler;
     private final BaseService<CommentDtoRequest, CommentDtoResponse, Long> service;
 
     public CommentController(BaseService<CommentDtoRequest, CommentDtoResponse, Long> service) {
@@ -41,7 +47,15 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
+//        Page<CommentDtoResponse> commentsPage = service.readAll(pageRequest);
+//
+//        return new ResponseEntity<>(commentsPage, HttpStatus.OK);
+
         Page<CommentDtoResponse> commentsPage = service.readAll(pageRequest);
+
+        commentsPage.getContent().forEach(authorDtoResponse -> {
+            commentModelAssembler.addLinks(authorDtoResponse);
+        });
 
         return new ResponseEntity<>(commentsPage, HttpStatus.OK);
     }
@@ -55,16 +69,10 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
             @ApiResponse(code = 500, message = "Application failed to process the request")
     })
     public ResponseEntity<CommentDtoResponse> readById(@Valid @PathVariable Long id) {
-//        return ResponseEntity.ok(service.readById(id));
-        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+        return new ResponseEntity<>(commentModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
     }
 
-//    @Override
-//    @PostMapping
-//    public ResponseEntity<CommentDtoResponse> create(@Valid @RequestBody CommentDtoRequest createRequest) {
-//        CommentDtoResponse commentDtoResponse = service.create(createRequest);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(commentDtoResponse);
-//    }
 
     @Override
     @PostMapping
@@ -95,12 +103,6 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
         return ResponseEntity.status(HttpStatus.OK).body(commentDtoResponse);
     }
 
-//    @Override
-//    @DeleteMapping(value = "/{id:\\d+}")
-//    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-//        service.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
 
     @Override
     @DeleteMapping("/{id}")

@@ -1,9 +1,22 @@
 package com.mjc.school.controller.exception;
 
+import java.time.OffsetDateTime;
+
 public class CustomErrorResponse {
     private int status;
     private String message;
-    private long timestamp;
+
+    private String exceptionName;
+    private OffsetDateTime timestamp;
+
+    public CustomErrorResponse() {
+    }
+
+    public CustomErrorResponse(String message, String exceptionName, OffsetDateTime timeStamp) {
+        this.message = message;
+        this.exceptionName = exceptionName;
+        this.timestamp = timeStamp;
+    }
 
     public int getStatus() {
         return status;
@@ -21,11 +34,11 @@ public class CustomErrorResponse {
         this.message = message;
     }
 
-    public long getTimestamp() {
+    public OffsetDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(OffsetDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }

@@ -1,24 +1,15 @@
 package com.mjc.school.repository.model.impl;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mjc.school.repository.model.BaseEntity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-//@Scope("prototype")
 @Table(name = "Author")
 public class AuthorModel implements BaseEntity<Long> {
 
@@ -29,14 +20,6 @@ public class AuthorModel implements BaseEntity<Long> {
     @Column(name = "name")
     private String name;
 
-//    @CreationTimestamp
-//    @Column(name = "create_date", updatable = false)
-//    private OffsetDateTime createDate;
-//
-//    @UpdateTimestamp
-//    @Column(name = "last_updated_date")
-//    private OffsetDateTime lastUpdatedDate;
-
     @CreationTimestamp
     @Column(name = "create_date", updatable = false)
     private OffsetDateTime createDate;
@@ -44,9 +27,6 @@ public class AuthorModel implements BaseEntity<Long> {
     @UpdateTimestamp
     @Column(name = "last_updated_date")
     private OffsetDateTime lastUpdatedDate;
-
-
-
 
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "authorModel", cascade = CascadeType.REMOVE)
@@ -97,15 +77,6 @@ public class AuthorModel implements BaseEntity<Long> {
     public void setLastUpdatedDate(OffsetDateTime lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
-
-
-//    public String getCreateDate() {
-//        return createDate.toInstant().toString();
-//    }
-//
-//    public String getLastUpdatedDate() {
-//        return lastUpdatedDate.toInstant().toString();
-//    }
 
 
     @Override
