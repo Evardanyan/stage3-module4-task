@@ -75,7 +75,6 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 500, message = "Application failed to process the request")
     })
     public ResponseEntity<NewsDtoResponse> readById(@PathVariable Long id) {
-//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
         return new ResponseEntity<>(newsModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
     }
 

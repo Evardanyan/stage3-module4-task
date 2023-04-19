@@ -54,10 +54,6 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
-//        Page<TagDtoResponse> tagsPage = service.readAll(pageRequest);
-//
-//        return new ResponseEntity<>(tagsPage, HttpStatus.OK);
-
         Page<TagDtoResponse> tagsPage = service.readAll(pageRequest);
 
         tagsPage.getContent().forEach(authorDtoResponse -> {
@@ -75,8 +71,6 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @ApiResponse(code = 500, message = "Application failed to process the request")
     })
     public ResponseEntity<TagDtoResponse> readById(@Valid @PathVariable Long id) {
-//        return ResponseEntity.ok(service.readById(id));
-//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
         return new ResponseEntity<>(tagModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
     }
 

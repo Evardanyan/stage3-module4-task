@@ -47,10 +47,6 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
-//        Page<CommentDtoResponse> commentsPage = service.readAll(pageRequest);
-//
-//        return new ResponseEntity<>(commentsPage, HttpStatus.OK);
-
         Page<CommentDtoResponse> commentsPage = service.readAll(pageRequest);
 
         commentsPage.getContent().forEach(authorDtoResponse -> {
@@ -69,7 +65,6 @@ public class CommentController implements BaseController<CommentDtoRequest, Comm
             @ApiResponse(code = 500, message = "Application failed to process the request")
     })
     public ResponseEntity<CommentDtoResponse> readById(@Valid @PathVariable Long id) {
-//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
         return new ResponseEntity<>(commentModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
     }
 

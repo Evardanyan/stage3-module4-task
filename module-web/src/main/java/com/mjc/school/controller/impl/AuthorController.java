@@ -51,10 +51,6 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
             @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
-//
-//        Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
-//
-//        return new ResponseEntity<>(authorsPage, HttpStatus.OK);
 
         Page<AuthorDtoResponse> authorsPage = service.readAll(pageRequest);
 
@@ -76,7 +72,6 @@ public class AuthorController implements BaseController<AuthorDtoRequest, Author
     })
     public ResponseEntity<AuthorDtoResponse> readById(@PathVariable Long id) {
         return new ResponseEntity<>(authorModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
-//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
     }
 
     @Override

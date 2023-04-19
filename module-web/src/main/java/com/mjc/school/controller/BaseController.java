@@ -56,7 +56,6 @@ public interface BaseController<T, R, K> {
 
     ResponseEntity<R> update(@PathVariable Long id, @Valid T updateRequest);
 
-//    ResponseEntity<Void> deleteById(@Valid K id);
     void deleteById(@Valid K id);
 
 }
