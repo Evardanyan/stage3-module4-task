@@ -1,10 +1,14 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
+import com.mjc.school.controller.util.AuthorModelAssembler;
+import com.mjc.school.controller.util.NewsModelAssembler;
 import com.mjc.school.service.BaseService;
+import com.mjc.school.service.dto.CommentDtoResponse;
 import com.mjc.school.service.dto.NewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,9 @@ import javax.validation.Valid;
 @Validated
 @Api(tags = "News Management", produces = "application/json", value = "Operations for creating, updating, retrieving and deleting news in the application")
 public class NewsController implements BaseController<NewsDtoRequest, NewsDtoResponse, Long> {
+
+    @Autowired
+    private NewsModelAssembler newsModelAssembler;
 
     private final BaseService<NewsDtoRequest, NewsDtoResponse, Long> service;
 
@@ -47,9 +54,16 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
+//        Page<NewsDtoResponse> newsPage = service.readAll(pageRequest);
+//
+//        return new ResponseEntity<>(newsPage, HttpStatus.OK);
         Page<NewsDtoResponse> newsPage = service.readAll(pageRequest);
 
+        newsPage.getContent().forEach(authorDtoResponse -> {
+            newsModelAssembler.addLinks(authorDtoResponse);
+        });
         return new ResponseEntity<>(newsPage, HttpStatus.OK);
+
     }
 
     @Override
@@ -61,7 +75,8 @@ public class NewsController implements BaseController<NewsDtoRequest, NewsDtoRes
             @ApiResponse(code = 500, message = "Application failed to process the request")
     })
     public ResponseEntity<NewsDtoResponse> readById(@PathVariable Long id) {
-        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+        return new ResponseEntity<>(newsModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
     }
 
     @Override

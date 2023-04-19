@@ -1,10 +1,14 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
+import com.mjc.school.controller.util.NewsModelAssembler;
+import com.mjc.school.controller.util.TagModelAssembler;
 import com.mjc.school.service.BaseService;
+import com.mjc.school.service.dto.NewsDtoResponse;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -21,6 +25,9 @@ import java.util.List;
 @Api(tags = "Tag Management", produces = "application/json", value = "Operations for creating, updating, retrieving and deleting tag in the application")
 public class TagController implements BaseController<TagDtoRequest, TagDtoResponse, Long> {
 
+
+    @Autowired
+    private TagModelAssembler tagModelAssembler;
     private final BaseService<TagDtoRequest, TagDtoResponse, Long> service;
 
     public TagController(BaseService<TagDtoRequest, TagDtoResponse, Long> service) {
@@ -41,14 +48,21 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
             @RequestParam(value = "size", defaultValue = "10")
             @ApiParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sort", defaultValue = "name")
-            @ApiParam(value = "Sort field", defaultValue = "title") String sort,
+            @ApiParam(value = "Sort field", defaultValue = "name") String sort,
             @RequestParam(value = "direction", defaultValue = "asc")
             @ApiParam(value = "Sort direction", defaultValue = "asc") String direction) {
 
         PageRequest pageRequest = service.buildPageRequest(page, size, sort, direction);
 
+//        Page<TagDtoResponse> tagsPage = service.readAll(pageRequest);
+//
+//        return new ResponseEntity<>(tagsPage, HttpStatus.OK);
+
         Page<TagDtoResponse> tagsPage = service.readAll(pageRequest);
 
+        tagsPage.getContent().forEach(authorDtoResponse -> {
+            tagModelAssembler.addLinks(authorDtoResponse);
+        });
         return new ResponseEntity<>(tagsPage, HttpStatus.OK);
     }
 
@@ -62,7 +76,8 @@ public class TagController implements BaseController<TagDtoRequest, TagDtoRespon
     })
     public ResponseEntity<TagDtoResponse> readById(@Valid @PathVariable Long id) {
 //        return ResponseEntity.ok(service.readById(id));
-        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+//        return new ResponseEntity<>(service.readById(id), HttpStatus.OK);
+        return new ResponseEntity<>(tagModelAssembler.addLinks(service.readById(id)), HttpStatus.OK);
     }
 
     @Override
